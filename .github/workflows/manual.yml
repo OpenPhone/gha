@@ -9,3 +9,7 @@ jobs:
       - run: |
           echo "repo: ${{ github.repository }}"
           echo "sha: ${{ github.sha }}"
+          echo "github ref: ${{ github.ref }}
+          echo "github ref_name: ${{ github.ref_nam }}
+          echo "github_actor: ${{ github.actor }}
+          echo "github: ${{ toJson(github) }}
