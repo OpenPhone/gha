@@ -6,10 +6,13 @@ jobs:
   do_stuff:
     runs-on: ubuntu-20.04
     steps: 
-      - run: |
+      - name: "Do Stuff"
+        env:
+          GITHUB_PAYLOAD: ${{ toJson(github) }}
+        run: |
           echo "repo: ${{ github.repository }}"
           echo "sha: ${{ github.sha }}"
           echo "github ref: ${{ github.ref }}
           echo "github ref_name: ${{ github.ref_nam }}
           echo "github_actor: ${{ github.actor }}
-          echo "github: ${{ toJson(github) }}
+          echo ${GITHUB_PAYLOAD}
