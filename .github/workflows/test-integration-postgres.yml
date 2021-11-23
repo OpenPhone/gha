@@ -1,0 +1,66 @@
+name: Reusable workflow for running integration tests
+
+on:
+  workflow_call:
+    secrets:
+      token:
+        description: 'The GitHub/npm token'
+        required: true
+    inputs:
+      test_command:
+        description: 'The command to run the integration tests'
+        default: 'npm run test:ci'
+        required: false
+        type: string
+
+jobs:
+  test-integration-postgres:
+    runs-on: ubuntu-latest
+
+    services:
+      postgres-svc:
+        image: postgres:13
+        env:
+          POSTGRES_USER: openphone
+          POSTGRES_PASSWORD: docker
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          repository: 'OpenPhone/database'
+          path: 'database'
+          token: ${{secrets.token}}
+      - name: Setup node 16
+        uses: actions/setup-node@v1
+        with:
+          node-version: '16'
+          registry-url: https://npm.pkg.github.com/
+          scope: '@openphone'
+      - run: npm ci
+        working-directory: 'database'
+        env:
+          NODE_AUTH_TOKEN: ${{secrets.token}}
+      - run: npm run up
+        working-directory: 'database'
+        env:
+          ENVIRONMENT: localdev
+          POSTGRES_HOST: localhost
+      - uses: actions/checkout@v2
+        with:
+          path: 'repo'
+      - run: npm ci
+        working-directory: 'repo'
+        env:
+          NODE_AUTH_TOKEN: ${{secrets.token}}
+      - run: ${{inputs.test_command}}
+        working-directory: 'repo'
+        env:
+          ENVIRONMENT: test
+          POSTGRES_HOST: localhost
