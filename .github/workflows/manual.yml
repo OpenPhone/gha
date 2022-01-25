@@ -3,6 +3,21 @@ on:
   workflow_dispatch:
 
 jobs:
+  test_workflow:
+    runs-on: ubuntu-20.04
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v2
+        with:
+          repository: OpenPhone/gha
+          ref: main
+          token: ${{ secrets.GHA_CR_PAT }}
+          path: ./.github/workflows
+      - name: Run my action
+        uses: ./.github/workflows/test-integration-mongo.yml
+        with
+          test_command: 'echo test'
+
   do_stuff:
     runs-on: ubuntu-20.04
     steps: 
