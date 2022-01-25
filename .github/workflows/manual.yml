@@ -15,7 +15,7 @@ jobs:
           path: ./.github/workflows
       - name: Run my action
         uses: ./.github/workflows/test-integration-mongo.yml
-        with
+        with:
           test_command: 'echo test'
 
   do_stuff:
