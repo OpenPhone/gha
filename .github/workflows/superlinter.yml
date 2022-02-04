@@ -2,15 +2,22 @@ name: Superlinter
 
 on:
   workflow_call:
+    secrets:
+      token:
+        description: 'The GitHub/npm token'
+        required: true
     inputs:
-        linter-env:
-          default: ''
-          required: false
-          type: string
-        linter-branch:
-          default: 'main'
-          required: true
-          type: string
+      linter-env:
+        description: 'Extra Environment variables for the superlinter'
+        default: ''
+        required: false
+        type: string
+      linter-branch:
+        description: 'Which branch'
+        default: 'main'
+        required: true
+        type: string
+
 jobs:
   lint:
     name: Lint changes
@@ -24,4 +31,4 @@ jobs:
         uses: github/super-linter@v4
         env: 
           DEFAULT_BRANCH: ${{ inputs.linter-branch }}
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.token }}
