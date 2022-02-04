@@ -1,0 +1,28 @@
+name: Superlinter
+
+on:
+  workflow_call:
+    inputs:
+        linter-env:
+          default: ''
+          required: false
+          type: string
+        linter-branch:
+          default: 'main'
+          required: true
+          type: string
+jobs:
+  lint:
+    name: Lint changes
+    runs-on: ubuntu-20.04
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+      - name: Lint Code Base
+        uses: github/super-linter@v4
+        env: 
+          ${{ inputs.linter-env }}
+          DEFAULT_BRANCH: ${{ inputs.linter-branch }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

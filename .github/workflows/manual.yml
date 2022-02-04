@@ -14,9 +14,9 @@ jobs:
           token: ${{ secrets.GHA_CR_PAT }}
           path: ./.github/workflows
       - name: Run my action
-        uses: ./.github/workflows/test-integration-mongo.yml
+        uses: ./.github/workflows/super-linter.yml
         with:
-          test_command: 'echo test'
+          linter-branch: 'master'
 
   do_stuff:
     runs-on: ubuntu-20.04
