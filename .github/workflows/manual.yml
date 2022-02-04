@@ -6,17 +6,10 @@ jobs:
   test_workflow:
     runs-on: ubuntu-20.04
     steps:
-      - name: Check out repository
-        uses: actions/checkout@v2
+      - name: Run superlinter
+        uses: OpenPhone/gha/.github/workflows/superlinter.yml@main
         with:
-          repository: OpenPhone/gha
-          ref: main
-          token: ${{ secrets.GHA_CR_PAT }}
-          path: ./.github/workflows
-      - name: Run my action
-        uses: ./.github/workflows/super-linter.yml
-        with:
-          linter-branch: 'master'
+          linter-branch: 'main'
 
   do_stuff:
     runs-on: ubuntu-20.04
