@@ -21,7 +21,7 @@ jobs:
       tags: 'latest'
       username: ${{ github.repository_owner }}
     secrets:
-      password: ${{ secrets.GHA_CR_PAT }}
+      password: ${{ secrets.CR_PAT }}
       build-args: |
         NPM_TOKEN=${{ secrets.GPR_ACCESS_TOKEN }}
 
