@@ -11,6 +11,20 @@ jobs:
     secrets:
       token: ${{ github.token }}
 
+  build_docker:
+    uses: OpenPhone/gha/.github/workflows/docker-build-push.yml@main
+    with:
+      registry: 'ghcr.io'
+      registry_path: 'openphone/gha'
+      dockerfile: ./Dockerfile
+      platforms: 'linux/amd64'
+      tags: 'latest'
+      username: ${{ github.repository_owner }}
+    secrets:
+      password: ${{ secrets.GHA_CR_PAT }}
+      build-args: |
+        NPM_TOKEN=${{ secrets.GPR_ACCESS_TOKEN }}
+
   do_stuff:
     runs-on: ubuntu-20.04
     steps: 
