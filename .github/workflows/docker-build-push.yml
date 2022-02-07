@@ -4,30 +4,38 @@ on:
   workflow_call:
     secrets:
       password:
+        description: 'password / token for login to container registry'
         required: true
-      build-args:
+      build_args:
+        description: 'Extra build args to give docker build'
         required: false
     inputs:
       registry:
+        description: 'Registry to login / push to'
         default: 'ghcr.io'
         required: false
         type: string
       registry_path:
+        description: 'Path to registry image name'
         required: true
         type: string
         default: 'openphone/gha'
       dockerfile:
+        description: 'Dockerfile you want to build'
         required: true
         type: string
       platforms:
+        description: 'Platforms to build for'
         default: 'linux/amd64'
         required: false
         type: string
       tags:
+        description: 'Tag for docker image'
         default: 'latest'
         required: false
         type: string
       username:
+        description: 'Username to login with'
         default: ${{ github.repository_owner }}
         required: false
         type: string
@@ -59,4 +67,4 @@ jobs:
           platforms: ${{ inputs.platforms }}
           push: true
           tags: ${{ inputs.registry }}/${{ inputs.registry_path }}:${{ inputs.tags }}
-          build-args: ${{ inputs.build-args }}
+          build-args: ${{ secrets.build_args }}

@@ -22,7 +22,7 @@ jobs:
       username: ${{ github.repository_owner }}
     secrets:
       password: ${{ secrets.CR_PAT }}
-      build-args: |
+      build_args: |
         NPM_TOKEN=${{ secrets.GPR_ACCESS_TOKEN }}
 
   do_stuff:
