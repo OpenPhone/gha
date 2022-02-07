@@ -58,5 +58,5 @@ jobs:
           file: ${{ inputs.dockerfile}}
           platforms: ${{ inputs.platforms }}
           push: true
-          tags: ${{ inputs.registry }}/${{ registry_path }}:${{ inputs.tags }}
+          tags: ${{ inputs.registry }}/${{ inputs.registry_path }}:${{ inputs.tags }}
           build-args: ${{ inputs.build-args }}
