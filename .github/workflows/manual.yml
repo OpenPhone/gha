@@ -4,12 +4,12 @@ on:
 
 jobs:
 
-  test_workflow:
+  superlinter:
     uses: OpenPhone/gha/.github/workflows/superlinter.yml@main
     with:
       linter-branch: 'main'
     secrets:
-      token: ${{ github.token }}
+      token: ${{ github.GITHUB_TOKEN }}
 
   build_docker:
     uses: OpenPhone/gha/.github/workflows/docker-build-push.yml@main
