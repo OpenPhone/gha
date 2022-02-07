@@ -9,9 +9,10 @@ jobs:
     with:
       linter-branch: 'main'
     secrets:
-      token: ${{ github.GITHUB_TOKEN }}
+      token: ${{ secrets.GITHUB_TOKEN }}
 
   build_docker:
+    needs: superlinter
     uses: OpenPhone/gha/.github/workflows/docker-build-push.yml@main
     with:
       registry: 'ghcr.io'
@@ -26,6 +27,7 @@ jobs:
         NPM_TOKEN=${{ secrets.GPR_ACCESS_TOKEN }}
 
   do_stuff:
+    needs: superlinter
     runs-on: ubuntu-20.04
     steps: 
       - name: "Do Stuff"
