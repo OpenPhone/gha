@@ -1,13 +1,7 @@
 name: Deploy Test
+
 on:
   workflow_dispatch:
-
-env:
-  AWS_ACCESS_KEY_ID: ${{ secrets.PROD_AWS_ACCESS_KEY_ID }}
-  AWS_SECRET_ACCESS_KEY: ${{ secrets.PROD_AWS_SECRET_ACCESS_KEY }}
-  AWS_DEFAULT_REGION: us-west-2
-  CLUSTERNAME: ${{ secrets.CLUSTER_NAME }}
-  TARGET_URL: https://admin.openphoneapi.com/
 
 jobs:
 
@@ -15,16 +9,17 @@ jobs:
     uses: OpenPhone/gha/.github/workflows/helm-deploy-eks.yml@main
     with:
       tag: 'latest'
-      aws_default_region: ${{ env.AWS_DEFAULT_REGION }}
+      aws_default_region: ${{ secrets.AWS_DEFAULT_REGION }}
       clustername: 'deep-sheep'
-      target_url: ${{ env.TARGET_URL }}
+      target_url: 'https://admin.openphoneapi.com/'
       chart_name: 'admin'
       chart_dir: 'deployment/d/charts/admin'
       release_name: 'admin'
       values_file: 'values.yml'
       deploy_env: 'dev'
     secrets:
-      token: ${{ secrets.GItHUB_TOKEN }}
-      aws_access_key_id: ${{ env.AWS_ACCESS_KEY_ID }}
+      token: ${{ secrets.GITHUB_TOKEN }}
+      aws_access_key_id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+      aws_secret_access_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
       chart_repo: 'openphone/deployment'
       checkout_path: 'deployment/d'
