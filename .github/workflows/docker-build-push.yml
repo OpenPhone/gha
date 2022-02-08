@@ -58,9 +58,9 @@ jobs:
         if: ${{ inputs.update_json }}
         run: |
           ver=${{ inputs.tags }}
-          cat package.json | jq ".version = \"$ver\"" > package.up
+          jq ".version = \"$ver\"" < package.json > package.up
           mv package.up package.json
-          cat package-lock.json | jq ".version = \"$ver\"" > package-lock.up
+          jq ".version = \"$ver\"" < package-lock.json > package-lock.up
           mv package-lock.up package-lock.json
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v1
