@@ -17,7 +17,7 @@ jobs:
       values_file: 'values.yml'
       deploy_env: 'dev'
     secrets:
-      token: "${{ secrets.GITHUB_TOKEN }}"
+      token: "${{ secrets.GHA_PAT }}"
       aws_default_region: "${{ secrets.AWS_DEFAULT_REGION }}"
       aws_access_key_id: "${{ secrets.AWS_ACCESS_KEY_ID }}"
       aws_secret_access_key: "${{ secrets.AWS_SECRET_ACCESS_KEY }}"
