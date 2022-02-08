@@ -12,6 +12,9 @@ on:
       aws_secret_access_key:
         description: 'AWS_SECRET_ACCESS_KEY'
         required: true
+      aws_default_region:
+        description: 'AWS_DEFAULT_REGION'
+        required: true
       chart_repo:
         description: 'Repository container helm charts'
         required: true
@@ -24,10 +27,6 @@ on:
         required: true
         type: string
         default: 'latest'
-      aws_default_region:
-        description: 'AWS_DEFAULT_REGION'
-        required: true
-        type: string
       clustername:
         description: 'Cluster Name'
         required: true
