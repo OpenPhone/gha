@@ -39,6 +39,11 @@ on:
         default: ${{ github.repository_owner }}
         required: false
         type: string
+      update_json:
+        description: Update package.json and package-lock.json with tag
+        default: false
+        required: false
+        type: boolean
 
 jobs:
   publish-docker:
@@ -49,6 +54,14 @@ jobs:
         uses: actions/checkout@v2
         with:
           fetch-depth: 0
+      - name: Update json
+        if: ${{ inputs.update_json }}
+        run: |
+          ver=${{ inputs.tags }}
+          $(cat package.json | jq ".version = \"$ver\"" > package.up)
+          mv package.up package.json
+          $(cat package-lock.json | jq ".version = \"$ver\"" > package-lock.up)
+          mv package-lock.up package-lock.json
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v1
       - name: Set up Docker Buildx
