@@ -9,7 +9,7 @@ jobs:
     uses: OpenPhone/gha/.github/workflows/helm-deploy-eks.yml@main
     with:
       tag: 'latest'
-      aws_default_region: ${{ secrets.AWS_DEFAULT_REGION }}
+      aws_default_region: "${{ secrets.AWS_DEFAULT_REGION }}"
       clustername: 'deep-sheep'
       target_url: 'https://admin.openphoneapi.com/'
       chart_name: 'admin'
@@ -18,8 +18,8 @@ jobs:
       values_file: 'values.yml'
       deploy_env: 'dev'
     secrets:
-      token: ${{ secrets.GITHUB_TOKEN }}
-      aws_access_key_id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-      aws_secret_access_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      token: "${{ secrets.GITHUB_TOKEN }}"
+      aws_access_key_id: "${{ secrets.AWS_ACCESS_KEY_ID }}"
+      aws_secret_access_key: "${{ secrets.AWS_SECRET_ACCESS_KEY }}"
       chart_repo: 'openphone/deployment'
       checkout_path: 'deployment/d'
