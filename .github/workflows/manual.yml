@@ -22,9 +22,9 @@ jobs:
       tags: 'latest'
       username: ${{ github.repository_owner }}
     secrets:
-      password: ${{ secrets.CR_PAT }}
+      password: ${{ secrets.GHA_PAT }}
       build_args: |
-        NPM_TOKEN=${{ secrets.GPR_ACCESS_TOKEN }}
+        NPM_TOKEN=${{ secrets.GHA_PAT }}
 
   do_stuff:
     needs: superlinter
