@@ -89,7 +89,7 @@ jobs:
       - name: Form helm command
         run: |
           cmd="helm upgrade --install --atomic ${{ inputs.chart_name }} ./ -f ${{ inputs.values_file }}"
-          IFS="," read -a extraval <<< ${{ inputs.values_extra }}
+          IFS="," read -a extraval <<< "${{ inputs.values_extra }}"
           for i in "${extraval[@]}"; do
               echo "Adding set command for ${i}"
               cmd="${cmd} --set ${i}"
