@@ -19,7 +19,6 @@ jobs:
       checkout_path: 'deployment/d'
       clustername: 'deep-sheep'
     with:
-      tag: 'latest'
       target_url: 'https://admin.openphoneapi.com/'
       chart_name: 'admin'
       chart_dir: 'deployment/d/k8s/charts/admin'
