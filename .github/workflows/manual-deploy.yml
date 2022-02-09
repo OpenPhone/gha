@@ -10,16 +10,6 @@ jobs:
 
   test-deploy:
     uses: OpenPhone/gha/.github/workflows/helm-deploy-eks.yml@main
-    with:
-      tag: 'latest'
-      clustername: 'deep-sheep'
-      target_url: 'https://admin.openphoneapi.com/'
-      chart_name: 'admin'
-      chart_dir: 'deployment/d/charts/admin'
-      release_name: 'admin'
-      values_file: 'values.yml'
-      values_extra: "admin.image.tag=latest, admin.replicaCount=1"
-      deploy_env: 'dev'
     secrets:
       token: "${{ secrets.GHA_PAT }}"
       aws_default_region: "${{ secrets.AWS_DEFAULT_REGION }}"
@@ -27,3 +17,13 @@ jobs:
       aws_secret_access_key: "${{ secrets.AWS_SECRET_ACCESS_KEY }}"
       chart_repo: 'openphone/deployment'
       checkout_path: 'deployment/d'
+    with:
+      tag: 'latest'
+      clustername: 'deep-sheep'
+      target_url: 'https://admin.openphoneapi.com/'
+      chart_name: 'admin'
+      chart_dir: 'deployment/d/k8s/charts/admin'
+      release_name: 'admin'
+      values_file: 'values.yml'
+      values_extra: "admin.image.tag=latest, admin.replicaCount=1"
+      deploy_env: 'dev'
