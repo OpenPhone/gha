@@ -88,7 +88,13 @@ jobs:
           environment: ${{ inputs.deploy_env }}
       - name: Form helm command
         run: |
-          echo "HELM_CMD=helm upgrade --install --atomic ${{ inputs.chart_name }} ./ -f ${{ inputs.values_file }}" >> $GITHUB_ENV
+          cmd=helm upgrade --install --atomic ${{ inputs.chart_name }} ./ -f ${{ inputs.values_file }}
+          IFS="," read -a extraval <<< ${{ inputs.values_extra }}
+          for i in "${extraval[@]}"; do
+              echo "Adding set command for ${i}"
+              cmd="${cmd} --set ${i}"
+            done
+          echo "HELM_CMD=${cmd}" >> $GITHUB_ENV
       - name: Helm upgrade install
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.aws_access_key_id }}
