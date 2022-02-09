@@ -90,6 +90,9 @@ jobs:
         run: |
           echo "HELM_CMD=helm upgrade --install --atomic ${{ inputs.chart_name }} ./ -f ${{ inputs.values_file }}" >> $GITHUB_ENV
       - name: Helm upgrade install
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.aws_access_key_id }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.aws_secret_access_key }}
         run: |
           cd ${{ inputs.chart_dir }}
           echo "Running ${{ env.HELM_CMD }}"
