@@ -18,7 +18,7 @@ jobs:
       chart_dir: 'deployment/d/charts/admin'
       release_name: 'admin'
       values_file: 'values.yml'
-      values_extra: "admin.image.tag=${{ env.deploy_tag }}, admin.replicaCount=${{ env.replica_count }}"
+      values_extra: "admin.image.tag=latest, admin.replicaCount=1"
       deploy_env: 'dev'
     secrets:
       token: "${{ secrets.GHA_PAT }}"
