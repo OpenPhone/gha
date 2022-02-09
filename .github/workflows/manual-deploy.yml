@@ -24,6 +24,6 @@ jobs:
       chart_name: 'admin'
       chart_dir: 'deployment/d/k8s/charts/admin'
       release_name: 'admin'
-      values_file: 'values.yml'
+      values_file: 'values.yaml'
       values_extra: "admin.image.tag=latest, admin.replicaCount=1"
       deploy_env: 'dev'
