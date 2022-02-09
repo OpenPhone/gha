@@ -21,16 +21,15 @@ on:
       checkout_path:
         description: 'Checkout path for helm charts repo'
         required: true
+      clustername:
+        description: 'Cluster Name'
+        required: true
     inputs:
       tag:
         description: 'Tag for docker image to deploy'
         required: true
         type: string
         default: 'latest'
-      clustername:
-        description: 'Cluster Name'
-        required: true
-        type: string
       target_url:
         description: 'Target URL for deploy'
         required: true
@@ -78,7 +77,7 @@ jobs:
           AWS_SECRET_ACCESS_KEY: ${{ secrets.aws_secret_access_key }}
         run: |
           aws eks --region ${{ secrets.aws_default_region }} \
-          update-kubeconfig --name ${{ inputs.clustername }}
+          update-kubeconfig --name ${{ secrets.clustername }}
       - name: Create GitHub deployment
         uses: chrnorm/deployment-action@releases/v1
         id: deployment

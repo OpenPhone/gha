@@ -17,9 +17,9 @@ jobs:
       aws_secret_access_key: "${{ secrets.AWS_SECRET_ACCESS_KEY }}"
       chart_repo: 'openphone/deployment'
       checkout_path: 'deployment/d'
+      clustername: 'deep-sheep'
     with:
       tag: 'latest'
-      clustername: 'deep-sheep'
       target_url: 'https://admin.openphoneapi.com/'
       chart_name: 'admin'
       chart_dir: 'deployment/d/k8s/charts/admin'
