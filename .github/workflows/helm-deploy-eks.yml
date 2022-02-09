@@ -51,6 +51,10 @@ on:
         description: 'values.yml file to use'
         required: true
         type: string
+      values_extra:
+        description: 'extra values for --set'
+        required: false
+        type: string
       deploy_env:
         description: 'Environment for deployment'
         required: true
@@ -73,7 +77,7 @@ jobs:
           AWS_ACCESS_KEY_ID: ${{ secrets.aws_access_key_id }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.aws_secret_access_key }}
         run: |
-          aws eks --region ${{ inputs.aws_default_region }} \
+          aws eks --region ${{ secrets.aws_default_region }} \
           update-kubeconfig --name ${{ inputs.clustername }}
       - name: Create GitHub deployment
         uses: chrnorm/deployment-action@releases/v1
@@ -82,11 +86,14 @@ jobs:
           token: "${{ github.token }}"
           target_url: "${{ inputs.target_url }}"
           environment: ${{ inputs.deploy_env }}
+      - name: Form helm command
+        run: |
+          echo "HELM_CMD=helm upgrade --install --atomic ${{ inputs.chart_name }} ./ -f ${{ inputs.values_file }}" >> $GITHUB_ENV
       - name: Helm upgrade install
         run: |
           cd ${{ inputs.chart_dir }}
-          helm upgrade --install --atomic \
-          ${{ inputs.chart_name }} ./ -f ${{ inputs.values_file }}
+          echo "Running ${{ env.HELM_CMD }}"
+          $HELM_CMD
       - name: Update deployment status (success)
         if: success()
         uses: chrnorm/deployment-status@releases/v1

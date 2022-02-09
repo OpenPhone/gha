@@ -1,5 +1,8 @@
 name: Deploy Test
 
+env:
+  deploy_tag: "latest"
+  replica_count: 1
 on:
   workflow_dispatch:
 
@@ -15,6 +18,7 @@ jobs:
       chart_dir: 'deployment/d/charts/admin'
       release_name: 'admin'
       values_file: 'values.yml'
+      values_extra: "admin.image.tag=${{ env.deploy_tag }}, admin.replicaCount=${{ env.replica_count }}"
       deploy_env: 'dev'
     secrets:
       token: "${{ secrets.GHA_PAT }}"
