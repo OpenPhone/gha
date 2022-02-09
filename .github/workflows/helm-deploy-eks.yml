@@ -27,7 +27,7 @@ on:
     inputs:
       tag:
         description: 'Tag for docker image to deploy'
-        required: true
+        required: false
         type: string
         default: 'latest'
       target_url:
