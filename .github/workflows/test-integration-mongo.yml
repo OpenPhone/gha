@@ -55,4 +55,3 @@ jobs:
         working-directory: 'repo'
         env:
           ENVIRONMENT: test
-          POSTGRES_HOST: localhost
