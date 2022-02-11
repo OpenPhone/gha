@@ -1,9 +1,33 @@
-name: Manual workflow
+name: Manual
 on:
   workflow_dispatch:
 
 jobs:
+
+  superlinter:
+    uses: OpenPhone/gha/.github/workflows/superlinter.yml@main
+    with:
+      linter-branch: 'main'
+    secrets:
+      token: ${{ secrets.GITHUB_TOKEN }}
+
+  build_docker:
+    needs: superlinter
+    uses: OpenPhone/gha/.github/workflows/docker-build-push.yml@main
+    with:
+      registry: 'ghcr.io'
+      registry_path: 'openphone/gha'
+      dockerfile: ./Dockerfile
+      platforms: 'linux/amd64'
+      tags: 'latest'
+      username: ${{ github.repository_owner }}
+    secrets:
+      password: ${{ secrets.GHA_PAT }}
+      build_args: |
+        NPM_TOKEN=${{ secrets.GHA_PAT }}
+
   do_stuff:
+    needs: superlinter
     runs-on: ubuntu-20.04
     steps: 
       - name: "Do Stuff"
@@ -13,6 +37,6 @@ jobs:
           echo "repo: ${{ github.repository }}"
           echo "sha: ${{ github.sha }}"
           echo "github ref: ${{ github.ref }}"
-          echo "github ref_name: ${{ github.ref_nam }}"
+          echo "github ref_name: ${{ github.ref_name }}"
           echo "github_actor: ${{ github.actor }}"
-          echo ${GITHUB_PAYLOAD}
+          echo "${GITHUB_PAYLOAD}"

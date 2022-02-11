@@ -1,0 +1,120 @@
+name: Deploy helm chart to EKS
+
+on:
+  workflow_call:
+    secrets:
+      token:
+        description: 'Token for pulling repo with charts'
+        required: true
+      aws_access_key_id:
+        description: 'AWS_ACCESS_KEY_ID'
+        required: true
+      aws_secret_access_key:
+        description: 'AWS_SECRET_ACCESS_KEY'
+        required: true
+      aws_default_region:
+        description: 'AWS_DEFAULT_REGION'
+        required: true
+      chart_repo:
+        description: 'Repository container helm charts'
+        required: true
+      checkout_path:
+        description: 'Checkout path for helm charts repo'
+        required: true
+      clustername:
+        description: 'Cluster Name'
+        required: true
+    inputs:
+      tag:
+        description: 'Tag for docker image to deploy'
+        required: false
+        type: string
+        default: 'latest'
+      target_url:
+        description: 'Target URL for deploy'
+        required: true
+        type: string
+      chart_name:
+        description: 'Chart name in the repo'
+        required: true
+        type: string
+      chart_dir:
+        description: 'Folder where the chart is including checkout path'
+        required: true
+        type: string
+      release_name:
+        description: 'release name for the chart'
+        required: true
+        type: string
+      values_file:
+        description: 'values.yml file to use'
+        required: true
+        type: string
+      values_extra:
+        description: 'extra values for --set'
+        required: false
+        type: string
+      deploy_env:
+        description: 'Environment for deployment'
+        required: true
+        type: string
+
+jobs:
+  deploy-helm:
+    name: Helm deploy to EKS
+    runs-on: ubuntu-20.04
+    steps:
+      - name: Check out the charts repo
+        uses: actions/checkout@v2
+        with:
+          repository: ${{ secrets.chart_repo }}
+          path: ${{ secrets.checkout_path }}
+          fetch-depth: 0
+          token: ${{ secrets.token }}
+      - name: Setup kubeconfig
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.aws_access_key_id }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.aws_secret_access_key }}
+        run: |
+          aws eks --region ${{ secrets.aws_default_region }} \
+          update-kubeconfig --name ${{ secrets.clustername }}
+      - name: Create GitHub deployment
+        uses: chrnorm/deployment-action@releases/v1
+        id: deployment
+        with:
+          token: "${{ github.token }}"
+          target_url: "${{ inputs.target_url }}"
+          environment: ${{ inputs.deploy_env }}
+      - name: Form helm command
+        run: |
+          cmd="helm upgrade --install --atomic ${{ inputs.chart_name }} ./ -f ${{ inputs.values_file }}"
+          IFS="," read -a extraval <<< "${{ inputs.values_extra }}"
+          for i in "${extraval[@]}"; do
+              echo "Adding set command for ${i}"
+              cmd="${cmd} --set ${i}"
+            done
+          echo "HELM_CMD=${cmd}" >> $GITHUB_ENV
+      - name: Helm upgrade install
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.aws_access_key_id }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.aws_secret_access_key }}
+        run: |
+          cd ${{ inputs.chart_dir }}
+          echo "Running ${{ env.HELM_CMD }}"
+          $HELM_CMD
+      - name: Update deployment status (success)
+        if: success()
+        uses: chrnorm/deployment-status@releases/v1
+        with:
+          token: "${{ github.token }}"
+          target_url: "${{ inputs.target_url }}"
+          state: "success"
+          deployment_id: ${{ steps.deployment.outputs.deployment_id }}
+      - name: Update deployment status (failure)
+        if: failure()
+        uses: chrnorm/deployment-status@releases/v1
+        with:
+          token: "${{ github.token }}"
+          target_url: "${{ inputs.target_url }}"
+          state: "failure"
+          deployment_id: ${{ steps.deployment.outputs.deployment_id }}

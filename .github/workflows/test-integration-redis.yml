@@ -1,0 +1,48 @@
+name: Reusable workflow for running redis integration tests
+
+on:
+  workflow_call:
+    secrets:
+      token:
+        description: 'The GitHub/npm token'
+        required: true
+    inputs:
+      test_command:
+        description: 'The command to run the integration tests'
+        default: 'npm run test:ci'
+        required: false
+        type: string
+
+jobs:
+  test-integration-redis:
+    runs-on: ubuntu-latest
+
+    services:
+      redis-svc:
+        image: redislabs/rejson:latest
+        ports:
+          - 6379:6379
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          path: 'repo'
+      - name: Setup node 16
+        uses: actions/setup-node@v1
+        with:
+          node-version: '16'
+          registry-url: https://npm.pkg.github.com/
+          scope: '@openphone'
+      - run: npm ci
+        working-directory: 'repo'
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.token }}
+      - run: ${{ inputs.test_command }}
+        working-directory: 'repo'
+        env:
+          ENVIRONMENT: test
