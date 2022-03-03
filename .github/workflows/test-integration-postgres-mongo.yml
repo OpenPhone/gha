@@ -12,6 +12,11 @@ on:
         default: 'npm run db:up'
         required: false
         type: string
+      skip_migration:
+        description: 'Whether or not the migrations should be skipped. Useful for when you want to run specific migration tests'
+        default: false
+        required: false
+        type: boolean
       test_command:
         description: 'The command to run the integration tests'
         default: 'npm run test:ci'
@@ -96,7 +101,8 @@ jobs:
         working-directory: 'repo'
         env:
           NODE_AUTH_TOKEN: ${{ secrets.token }}
-      - run: ${{inputs.migration_command}}
+      - run: ${{ inputs.migration_command }}
+        if: ${{ !inputs.skip_migration }}
         working-directory: 'repo'
         env:
           ENVIRONMENT: test
