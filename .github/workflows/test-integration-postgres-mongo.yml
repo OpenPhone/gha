@@ -42,6 +42,11 @@ on:
         default: 'localhost'
         required: false
         type: string
+      postgres_database:
+        description: 'The Postgres database'
+        default: 'openphone'
+        required: false
+        type: string
       mongo_version:
         description: 'The version of Mongo to use'
         default: '4.2'
@@ -73,6 +78,7 @@ jobs:
         env:
           POSTGRES_USER: ${{ inputs.postgres_user }}
           POSTGRES_PASSWORD: ${{ inputs.postgres_password }}
+          POSTGRES_DB: ${{ inputs.postgres_database }}
         ports:
           - 5432:5432
         options: >-
