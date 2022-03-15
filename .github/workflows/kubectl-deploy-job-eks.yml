@@ -73,7 +73,7 @@ jobs:
         env: 
           AWS_ACCESS_KEY_ID: ${{ secrets.aws_access_key_id }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.aws_secret_access_key }}
-          registry: ${{ inputs.registry }}/${{ inputs.registry_path}}
+          registry: ${{ inputs.registry }}${{ inputs.registry_path}}
           tag: ${{ inputs.tag }}
           thecmd: ${{ inputs.command }}
           theargs: ${{ inputs.args }}
