@@ -1,0 +1,91 @@
+name: Superlinter
+
+on:
+  workflow_call:
+    secrets:
+      token:
+        description: 'Github token'
+        required: true
+      aws_access_key_id:
+        description: 'AWS_ACCESS_KEY_ID'
+        required: true
+      aws_secret_access_key:
+        description: 'AWS_SECRET_ACCESS_KEY'
+        required: true
+      aws_default_region:
+        description: 'AWS_DEFAULT_REGION'
+        required: true
+      clustername:
+        description: 'Cluster Name'
+        required: true
+
+    inputs:
+      registry:
+        description: 'registry for the docker images'
+        default: 'ghcr.io'
+        required: false
+        type: string
+      registry_path:
+        description: 'registry path for the repo'
+        required: true
+        type: string
+      job_name:
+        description: 'name of job'
+        required: true
+        type: string
+      job_file:
+        description: 'filename of the job'
+        default: 'job.yaml'
+        required: true
+        type: string
+      tag:
+        description: 'Image tag to deploy'
+        default: 'latest'
+        required: true
+        type: string
+      command:
+        description: 'Command to run on the image'
+        default: '["sh", "-c"]'
+        required: false
+        type: string
+      args:
+        description: 'Command args'
+        default: '["echo test"]'
+        required: false
+        type: string
+
+jobs:
+  deploy-job:
+    name: Deploying job to kubernetes and waiting
+    runs-on: ubuntu-20.04
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+      - name: Setup kubeconfig
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.aws_access_key_id }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.aws_secret_access_key }}
+        run: |
+          aws eks --region ${{ secrets.aws_default_region }} \
+          update-kubeconfig --name ${{ secrets.clustername }}
+      - name: kubectl apply
+        env: 
+          registry: ${{ inputs.registry }}/${{ inputs.registry_path}}
+          tag: ${{ inputs.tag }}
+          thecmd: ${{ inputs.command }}
+          theargs: ${{ inputs.args }}
+          jobname: ${{ inputs.job_name }}
+          jobfile: ${{ inputs.job_file }}
+          newfile: ${{ inputs.job_name }}-new.yml
+        run: |
+          cp ${jobfile} ${newfile}
+          sed -i "s|image:.*|image: ${registry}:${tag}|g" ${newfile}
+          sed -i "s|command:.*|command: ${thecmd}|g" ${newfile}
+          sed -i "s|args:.*|args: ${theargs}|g" ${newfile}
+          echo && echo
+          kubectl delete -f ${newfile} --ignore-not-found=true
+          kubectl apply -f ${newfile}
+          kubectl wait --for=condition=complete job/${jobname} --timeout=120s
+          kubectl logs job/${jobname}
