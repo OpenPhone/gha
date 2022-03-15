@@ -1,4 +1,4 @@
-name: Superlinter
+name: Deploy job yaml to AWS EKS cluster
 
 on:
   workflow_call:
@@ -36,11 +36,10 @@ on:
       job_file:
         description: 'filename of the job'
         default: 'job.yaml'
-        required: true
+        required: false
         type: string
       tag:
         description: 'Image tag to deploy'
-        default: 'latest'
         required: true
         type: string
       command:
@@ -84,7 +83,6 @@ jobs:
           sed -i "s|image:.*|image: ${registry}:${tag}|g" ${newfile}
           sed -i "s|command:.*|command: ${thecmd}|g" ${newfile}
           sed -i "s|args:.*|args: ${theargs}|g" ${newfile}
-          echo && echo
           kubectl delete -f ${newfile} --ignore-not-found=true
           kubectl apply -f ${newfile}
           kubectl wait --for=condition=complete job/${jobname} --timeout=120s
