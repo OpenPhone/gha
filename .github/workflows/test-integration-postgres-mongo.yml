@@ -6,9 +6,6 @@ on:
       token:
         description: 'The GitHub/npm token'
         required: true
-      codecov_token:
-        description: 'The Codecov token'
-        required: false
     inputs:
       migration_command:
         description: 'The command to run the Postgres migrations'
@@ -119,4 +116,4 @@ jobs:
       - name: Codecov Uploader
         uses: codecov/codecov-action@v3
         with:
-          token: ${{ secrets.codecov_token }}
+          token: ${{ secrets.CODECOV_TOKEN }}

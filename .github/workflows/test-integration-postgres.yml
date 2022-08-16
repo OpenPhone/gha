@@ -75,20 +75,19 @@ jobs:
           registry-url: https://npm.pkg.github.com/
           scope: '@openphone'
       - uses: actions/checkout@v2
-        with:
-          path: 'repo'
       - run: npm ci
-        working-directory: 'repo'
         env:
           NODE_AUTH_TOKEN: ${{secrets.token}}
       - run: ${{ inputs.migration_command }}
         if: ${{ !inputs.skip_migration }}
-        working-directory: 'repo'
         env:
           ENVIRONMENT: test
           POSTGRES_HOST: ${{ inputs.postgres_host }}
       - run: ${{inputs.test_command}}
-        working-directory: 'repo'
         env:
           ENVIRONMENT: test
           POSTGRES_HOST: ${{ inputs.postgres_host }}
+      - name: Codecov Uploader
+        uses: codecov/codecov-action@v3
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
