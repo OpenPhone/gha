@@ -7,6 +7,11 @@ on:
         description: 'The GitHub/npm token'
         required: true
     inputs:
+      setup_global_postgres:
+        description: 'Setup Postgres @openphone/database repo'
+        default: true
+        required: false
+        type: boolean
       migration_command:
         description: 'The command to run the Postgres migrations'
         default: 'npm run db:up'
@@ -103,7 +108,8 @@ jobs:
           node-version: '16'
           registry-url: https://npm.pkg.github.com/
           scope: '@openphone'
-      - uses: supercharge/mongodb-github-action@1.7.0
+      - name: spool up mongo
+        uses: supercharge/mongodb-github-action@1.7.0
         with:
           mongodb-version: ${{ inputs.mongo_version }}
           mongodb-username: ${{ inputs.mongo_username }}
@@ -113,15 +119,36 @@ jobs:
       - run: npm ci
         env:
           NODE_AUTH_TOKEN: ${{ secrets.token }}
+      # Setup of the global postgres database.
+      - name: actions/checkout@v2 @openphone/database
+        uses: actions/checkout@v2
+        if: ${{ inputs.setup_global_postgres && !inputs.skip_migration }}
+        with:
+          repository: 'OpenPhone/database'
+          path: 'database'
+          token: ${{ secrets.token }}
+      - name: migrate global postgres database
+        run: |
+          npm ci
+          npm run up
+        if: ${{ inputs.setup_global_postgres && !inputs.skip_migration }}
+        working-directory: 'database'
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.token }}
+          ENVIRONMENT: localdev
+          POSTGRES_HOST: ${{ inputs.postgres_host }}
+      # Run migrations against the local postgres database.
       - run: ${{ inputs.migration_command }}
-        if: ${{ !inputs.skip_migration }}
+        if: ${{ !inputs.setup_global_postgres && !inputs.skip_migration }}
         env:
           ENVIRONMENT: test
           POSTGRES_HOST: ${{ inputs.postgres_host }}
+      # Test all the things!!!
       - run: ${{ inputs.test_command }}
         env:
           ENVIRONMENT: test
           POSTGRES_HOST: ${{ inputs.postgres_host }}
+      # Upload the coverage report to codecov.io.
       - name: Codecov Uploader
         uses: codecov/codecov-action@v3
         with:
