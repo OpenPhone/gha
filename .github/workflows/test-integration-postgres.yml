@@ -115,5 +115,3 @@ jobs:
       # Upload the coverage report to codecov.io.
       - name: Codecov Uploader
         uses: codecov/codecov-action@v3
-        with:
-          token: ${{ secrets.CODECOV_TOKEN }}
