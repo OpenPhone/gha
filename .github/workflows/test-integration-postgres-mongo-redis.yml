@@ -115,8 +115,19 @@ jobs:
           mongodb-username: ${{ inputs.mongo_username }}
           mongodb-password: ${{ inputs.mongo_password }}
           mongodb-db: ${{ inputs.mongo_db }}
+
       - uses: actions/checkout@v2
-      - run: npm ci
+
+      - name: Cache dependencies
+        id: cache
+        uses: actions/cache@v2
+        with:
+          path: ./node_modules
+          key: modules-${{ hashFiles('package-lock.json') }}
+
+      - name: Install dependencies
+        if: steps.cache.outputs.cache-hit != 'true'
+        run: npm ci
         env:
           NODE_AUTH_TOKEN: ${{ secrets.token }}
       # Setup of the global postgres database.
