@@ -103,11 +103,12 @@ jobs:
 
     steps:
       - name: Setup node 16
-        uses: actions/setup-node@v1
+        uses: actions/setup-node@v3
         with:
           node-version: '16'
           registry-url: https://npm.pkg.github.com/
           scope: '@openphone'
+          cache: 'npm'
       - name: spool up mongo
         uses: supercharge/mongodb-github-action@1.7.0
         with:
@@ -125,9 +126,13 @@ jobs:
           path: ./node_modules
           key: modules-${{ hashFiles('package-lock.json') }}
 
-      - name: Install dependencies
+      - name: Run CI
         if: steps.cache.outputs.cache-hit != 'true'
         run: npm ci
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.token }}
+      - name: Run Install
+        run: npm install
         env:
           NODE_AUTH_TOKEN: ${{ secrets.token }}
       # Setup of the global postgres database.
