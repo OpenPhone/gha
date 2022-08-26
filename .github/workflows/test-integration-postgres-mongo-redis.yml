@@ -109,6 +109,7 @@ jobs:
           registry-url: https://npm.pkg.github.com/
           scope: '@openphone'
           cache: 'npm'
+          cache-dependency-path: '**/package-lock.json'
       - name: spool up mongo
         uses: supercharge/mongodb-github-action@1.7.0
         with:
