@@ -140,14 +140,14 @@ jobs:
           token: ${{ secrets.token }}
 
       - name: Cache database dependencies
-        id: cache
+        id: cache-database
         uses: actions/cache@v2
         with:
           path: ./node_modules
           key: modules-${{ hashFiles('package-lock.json') }}
 
       - name: Install database dependencies
-        if: steps.cache.outputs.cache-hit != 'true'
+        if: steps.cache-database.outputs.cache-hit != 'true'
         run: npm ci
         working-directory: 'database'
         env:
