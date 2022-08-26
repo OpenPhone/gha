@@ -138,10 +138,25 @@ jobs:
           repository: 'OpenPhone/database'
           path: 'database'
           token: ${{ secrets.token }}
+
+      - name: Cache database dependencies
+        id: cache
+        uses: actions/cache@v2
+        with:
+          path: ./node_modules
+          key: modules-${{ hashFiles('package-lock.json') }}
+
+      - name: Install database dependencies
+        if: steps.cache.outputs.cache-hit != 'true'
+        run: npm ci
+        working-directory: 'database'
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.token }}
+          ENVIRONMENT: localdev
+          POSTGRES_HOST: ${{ inputs.postgres_host }}
+
       - name: migrate global postgres database
-        run: |
-          npm ci
-          npm run up
+        run: npm run up
         if: ${{ inputs.setup_global_postgres && !inputs.skip_migration }}
         working-directory: 'database'
         env:
