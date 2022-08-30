@@ -103,7 +103,7 @@ jobs:
 
     steps:
       - name: Setup node 16
-        uses: actions/setup-node@v1
+        uses: actions/setup-node@v3
         with:
           node-version: '16'
           registry-url: https://npm.pkg.github.com/
@@ -115,8 +115,23 @@ jobs:
           mongodb-username: ${{ inputs.mongo_username }}
           mongodb-password: ${{ inputs.mongo_password }}
           mongodb-db: ${{ inputs.mongo_db }}
+
       - uses: actions/checkout@v2
-      - run: npm ci
+
+      - name: Cache dependencies
+        id: cache
+        uses: actions/cache@v2
+        with:
+          path: ./node_modules
+          key: modules-${{ hashFiles('package-lock.json') }}
+
+      - name: Run CI
+        if: steps.cache.outputs.cache-hit != 'true'
+        run: npm ci
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.token }}
+      - name: Run Install
+        run: npm install
         env:
           NODE_AUTH_TOKEN: ${{ secrets.token }}
       # Setup of the global postgres database.
@@ -127,6 +142,7 @@ jobs:
           repository: 'OpenPhone/database'
           path: 'database'
           token: ${{ secrets.token }}
+
       - name: migrate global postgres database
         run: |
           npm ci
