@@ -12,6 +12,11 @@ on:
         default: true
         required: false
         type: boolean
+      global_postgres_ref:
+        description: 'Branch of Postgres @openphone/database repo to use'
+        default: 'master'
+        required: false
+        type: string
       migration_command:
         description: 'The command to run the Postgres migrations'
         default: 'npm run db:up'
@@ -74,7 +79,7 @@ on:
         type: string
 
 jobs:
-  test-integration-postgres-mongo:
+  test-integration-postgres-mongo-redis:
     runs-on: ubuntu-latest
 
     services:
@@ -140,6 +145,7 @@ jobs:
         if: ${{ inputs.setup_global_postgres && !inputs.skip_migration }}
         with:
           repository: 'OpenPhone/database'
+          ref: ${{ inputs.global_postgres_ref }}
           path: 'database'
           token: ${{ secrets.token }}
 
