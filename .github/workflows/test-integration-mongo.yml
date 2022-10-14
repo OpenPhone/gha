@@ -45,13 +45,11 @@ jobs:
           mongodb-password: ${{ inputs.mongo_password }}
           mongodb-db: ${{ inputs.mongo_db }}
       - uses: actions/checkout@v2
-        with:
-          path: 'repo'
       - run: npm ci
-        working-directory: 'repo'
         env:
           NODE_AUTH_TOKEN: ${{ secrets.token }}
       - run: ${{ inputs.test_command }}
-        working-directory: 'repo'
         env:
           ENVIRONMENT: test
+      - name: Codecov Uploader
+        uses: codecov/codecov-action@v3

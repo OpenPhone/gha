@@ -30,8 +30,6 @@ jobs:
 
     steps:
       - uses: actions/checkout@v2
-        with:
-          path: 'repo'
       - name: Setup node 16
         uses: actions/setup-node@v1
         with:
@@ -39,10 +37,10 @@ jobs:
           registry-url: https://npm.pkg.github.com/
           scope: '@openphone'
       - run: npm ci
-        working-directory: 'repo'
         env:
           NODE_AUTH_TOKEN: ${{ secrets.token }}
       - run: ${{ inputs.test_command }}
-        working-directory: 'repo'
         env:
           ENVIRONMENT: test
+      - name: Codecov Uploader
+        uses: codecov/codecov-action@v3
