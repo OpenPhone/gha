@@ -1,0 +1,24 @@
+name: Reusable workflow for running automatic labeling of PRs by branch name
+
+on:
+  workflow_call:
+    secrets:
+      token:
+        description: 'The GitHub/npm token'
+        required: true
+    inputs:
+      configuration-path:
+        description: 'An optional path to the pr-labeler.yml file. Defaults to .github/pr-labeler.yml'
+        default: '.github/pr-labeler.yml'
+        required: false
+        type: string
+
+jobs:
+  label-pr:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: TimonVS/pr-labeler-action@v3
+        with:
+          configuration-path: ${{ inputs.configuration-path }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.token }}
