@@ -80,7 +80,7 @@ on:
 
 jobs:
   test-integration-postgres-mongo-redis:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-latest-16-cores
 
     services:
       postgres-svc:
