@@ -14,7 +14,7 @@ on:
         type: string
 
 jobs:
-  test-integration-rabbit:
+  test-integration-rabbit-redis:
     runs-on: ubuntu-latest
 
     services:
