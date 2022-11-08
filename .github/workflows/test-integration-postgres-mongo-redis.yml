@@ -121,11 +121,11 @@ jobs:
           mongodb-password: ${{ inputs.mongo_password }}
           mongodb-db: ${{ inputs.mongo_db }}
 
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
 
       - name: Cache dependencies
         id: cache
-        uses: actions/cache@v2
+        uses: actions/cache@v3
         with:
           path: ./node_modules
           key: modules-${{ hashFiles('package-lock.json') }}
@@ -140,8 +140,8 @@ jobs:
         env:
           NODE_AUTH_TOKEN: ${{ secrets.token }}
       # Setup of the global postgres database.
-      - name: actions/checkout@v2 @openphone/database
-        uses: actions/checkout@v2
+      - name: actions/checkout@v3 @openphone/database
+        uses: actions/checkout@v3
         if: ${{ inputs.setup_global_postgres && !inputs.skip_migration }}
         with:
           repository: 'OpenPhone/database'
