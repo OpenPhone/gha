@@ -58,6 +58,11 @@ on:
         description: 'Environment for deployment'
         required: true
         type: string
+      timeout:
+        description: 'Duration to wait for a successful deployment e.g. 300s, 10m, 1h'
+        required: false
+        type: string
+        default: '300s'
 
 jobs:
   deploy-helm:
@@ -87,7 +92,7 @@ jobs:
           environment: ${{ inputs.deploy_env }}
       - name: Form helm command
         run: |
-          cmd="helm upgrade --install --atomic ${{ inputs.chart_name }} ./ -f ${{ inputs.values_file }}"
+          cmd="helm upgrade --install --atomic ${{ inputs.chart_name }} ./ -f ${{ inputs.values_file }} --wait --timeout ${{ inputs.timeout }}"
           IFS="," read -a extraval <<< "${{ inputs.values_extra }}"
           for i in "${extraval[@]}"; do
               echo "Adding set command for ${i}"
