@@ -59,7 +59,7 @@ on:
         required: true
         type: string
       timeout:
-        description: 'Duration in to wait for a successful deployment e.g. 300s, 10m, 1h'
+        description: 'Duration to wait for a successful deployment e.g. 300s, 10m, 1h'
         required: false
         type: string
         default: '300s'
