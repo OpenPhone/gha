@@ -92,12 +92,13 @@ jobs:
           --health-timeout 5s
           --health-retries 5
       rabbitmq:
-        image: rabbitmq:3.9.7
+        image: rabbitmq:3.9.7-management
         env:
           RABBITMQ_DEFAULT_USER: openphone
           RABBITMQ_DEFAULT_PASS: docker
         ports:
           - 5672:5672
+          - 15672:15672
 
     steps:
       - name: Setup node 16
