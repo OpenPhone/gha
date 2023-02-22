@@ -24,11 +24,6 @@ jobs:
           discovery.type: single-node
         ports:
           - 9200:9200
-        options: >-
-          --health-cmd "curl https://localhost:9200/_cluster/health"
-          --health-interval 5s
-          --health-timeout 5s
-          --health-retries 2
 
     steps:
       - uses: actions/checkout@v3
