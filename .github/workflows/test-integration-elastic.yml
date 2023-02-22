@@ -1,0 +1,56 @@
+name: Reusable workflow for running elastic integration tests
+
+on:
+  workflow_call:
+    secrets:
+      token:
+        description: 'The GitHub/npm token'
+        required: true
+    inputs:
+      test_command:
+        description: 'The command to run the integration tests'
+        default: 'npm run test:ci'
+        required: false
+        type: string
+
+jobs:
+  test-integration-elastic:
+    runs-on: ubuntu-latest
+
+    services:
+      elasticsearch:
+        image: docker.elastic.co/elasticsearch/elasticsearch:8.1.2
+        env:
+          discovery.type: single-node
+          SECURITY_ENABLED: false
+          STACK_VERSION: 8.1.2
+        ports:
+          - 9200:9200
+        options: >-
+          --health-cmd "curl http://localhost:9200/_cluster/health"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 10
+
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 16
+          registry-url: https://npm.pkg.github.com/
+          scope: '@openphone'
+      - run: npm ci
+        env:
+          NODE_AUTH_TOKEN: ${{secrets.token}}
+
+      # Test all the things!!!
+      - run: ${{ inputs.test_command }}
+        env:
+          ENVIRONMENT: test
+          ELASTIC_URL: http://localhost:9200
+          ELASTIC_USER: elastic
+          ELASTIC_PASSWORD: changeme
+
+      # Upload the coverage report to codecov.io.
+      - name: Codecov Uploader
+        uses: codecov/codecov-action@v3
