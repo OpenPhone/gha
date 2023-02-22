@@ -22,15 +22,13 @@ jobs:
         image: docker.elastic.co/elasticsearch/elasticsearch:8.1.2
         env:
           discovery.type: single-node
-          SECURITY_ENABLED: false
-          STACK_VERSION: 8.1.2
         ports:
           - 9200:9200
         options: >-
           --health-cmd "curl http://localhost:9200/_cluster/health"
           --health-interval 10s
           --health-timeout 5s
-          --health-retries 10
+          --health-retries 5
 
     steps:
       - uses: actions/checkout@v3
