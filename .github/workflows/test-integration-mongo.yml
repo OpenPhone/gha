@@ -44,7 +44,7 @@ jobs:
           mongodb-username: ${{ inputs.mongo_username }}
           mongodb-password: ${{ inputs.mongo_password }}
           mongodb-db: ${{ inputs.mongo_db }}
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - run: npm ci
         env:
           NODE_AUTH_TOKEN: ${{ secrets.token }}
