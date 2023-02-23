@@ -119,7 +119,8 @@ jobs:
 
     steps:
       - uses: actions/checkout@v3
-        run: npm ci
+
+      - run: npm ci
         env:
           NODE_AUTH_TOKEN: ${{ secrets.token }}
 
@@ -145,10 +146,10 @@ jobs:
           path: 'database'
           token: ${{ secrets.token }}
       - name: migrate global postgres database
+        if: ${{ inputs.setup_global_postgres && !inputs.skip_migration }}
         run: |
           npm ci
           npm run up
-        if: ${{ inputs.setup_global_postgres && !inputs.skip_migration }}
         working-directory: 'database'
         env:
           NODE_AUTH_TOKEN: ${{ secrets.token }}
