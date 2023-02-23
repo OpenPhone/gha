@@ -1,0 +1,175 @@
+name: Reusable workflow for running postgres, mongo, and elastic for integration tests
+
+on:
+  workflow_call:
+    secrets:
+      token:
+        description: 'The GitHub/npm token'
+        required: true
+    inputs:
+      setup_global_postgres:
+        description: 'Setup Postgres @openphone/database repo'
+        default: true
+        required: false
+        type: boolean
+      migration_command:
+        description: 'The command to run the Postgres migrations'
+        default: 'npm run db:up'
+        required: false
+        type: string
+      skip_migration:
+        description: 'Whether or not the migrations should be skipped. Useful for when you want to run specific migration tests'
+        default: false
+        required: false
+        type: boolean
+      test_command:
+        description: 'The command to run the integration tests'
+        default: 'npm run test:ci'
+        required: false
+        type: string
+      postgres_version:
+        description: 'The version of Postgres to use'
+        default: '13'
+        required: false
+        type: string
+      postgres_user:
+        description: 'The Postgres user'
+        default: 'openphone'
+        required: false
+        type: string
+      postgres_password:
+        description: 'The Postgres password'
+        default: 'docker'
+        required: false
+        type: string
+      postgres_host:
+        description: 'The Postgres host'
+        default: 'localhost'
+        required: false
+        type: string
+      postgres_database:
+        description: 'The Postgres database'
+        default: 'openphone'
+        required: false
+        type: string
+      mongo_version:
+        description: 'The version of Mongo to use'
+        default: '4.2'
+        required: false
+        type: string
+      mongo_username:
+        description: 'The Mongo username'
+        default: 'admin'
+        required: false
+        type: string
+      mongo_password:
+        description: 'The Mongo password'
+        default: 'docker'
+        required: false
+        type: string
+      mongo_db:
+        description: 'The Mongo db name'
+        default: 'openphone'
+        required: false
+        type: string
+      elastic_password:
+        description: 'The Elastic password'
+        default: 'changeme'
+        required: false
+        type: string
+      elastic_url:
+        description: 'The Elastic host url'
+        default: 'http://localhost:9200'
+        required: false
+        type: string
+
+jobs:
+  test-integration-postgres-mongo-elastic:
+    runs-on: ubuntu-latest
+
+    services:
+      postgres-svc:
+        image: postgres:13
+        env:
+          POSTGRES_USER: ${{ inputs.postgres_user }}
+          POSTGRES_PASSWORD: ${{ inputs.postgres_password }}
+          POSTGRES_DB: ${{ inputs.postgres_database }}
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+      elasticsearch:
+        image: docker.elastic.co/elasticsearch/elasticsearch:8.1.2
+        env:
+          STACK_VERSION: 8.1.2
+          ELASTIC_PASSWORD: ${{ inputs.elastic_password }}
+          discovery.type: single-node
+          xpack.security.enabled: false
+        ports:
+          - 9200:9200
+        options: >-
+          --health-cmd "curl http://localhost:9200/_cluster/health"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 10
+
+    steps:
+      - uses: actions/checkout@v3
+        run: npm ci
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.token }}
+
+      - uses: actions/setup-node@v3
+        with:
+          node-version: '16'
+          registry-url: https://npm.pkg.github.com/
+          scope: '@openphone'
+
+      - uses: supercharge/mongodb-github-action@1.9.0
+        with:
+          mongodb-version: ${{ inputs.mongo_version }}
+          mongodb-username: ${{ inputs.mongo_username }}
+          mongodb-password: ${{ inputs.mongo_password }}
+          mongodb-db: ${{ inputs.mongo_db }}
+
+      # Setup of the global postgres database.
+      - name: actions/checkout@v3 @openphone/database
+        uses: actions/checkout@v3
+        if: ${{ inputs.setup_global_postgres && !inputs.skip_migration }}
+        with:
+          repository: 'OpenPhone/database'
+          path: 'database'
+          token: ${{ secrets.token }}
+      - name: migrate global postgres database
+        run: |
+          npm ci
+          npm run up
+        if: ${{ inputs.setup_global_postgres && !inputs.skip_migration }}
+        working-directory: 'database'
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.token }}
+          ENVIRONMENT: localdev
+          POSTGRES_HOST: ${{ inputs.postgres_host }}
+
+      # Run migrations against the local postgres database.
+      - run: ${{ inputs.migration_command }}
+        if: ${{ !inputs.setup_global_postgres && !inputs.skip_migration }}
+        env:
+          ENVIRONMENT: test
+          POSTGRES_HOST: ${{ inputs.postgres_host }}
+
+      # Test all the things!!!
+      - run: ${{ inputs.test_command }}
+        env:
+          ENVIRONMENT: test
+          POSTGRES_HOST: ${{ inputs.postgres_host }}
+          ELASTIC_URL: ${{ inputs.elastic_url }}
+          ELASTIC_PASSWORD: ${{ inputs.elastic_password }}
+
+      # Upload the coverage report to codecov.io.
+      - name: Codecov Uploader
+        uses: codecov/codecov-action@v3
