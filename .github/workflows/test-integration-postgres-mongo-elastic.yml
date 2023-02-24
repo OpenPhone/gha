@@ -164,7 +164,7 @@ jobs:
           POSTGRES_HOST: ${{ inputs.postgres_host }}
 
       # Run setup of local elastic.
-      - run: npm run db:up
+      - run: npm run elastic:up
         env:
           ELASTIC_URL: ${{ inputs.elastic_url }}
           ELASTIC_PASSWORD: ${{ inputs.elastic_password }}
