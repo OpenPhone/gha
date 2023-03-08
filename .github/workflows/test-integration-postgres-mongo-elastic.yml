@@ -85,7 +85,7 @@ on:
 
 jobs:
   test-integration-postgres-mongo-elastic:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
 
     services:
       postgres-svc:
