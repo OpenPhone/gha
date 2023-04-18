@@ -1,0 +1,75 @@
+name: Reusable workflow for running postgres (with prisma) with rabbit and redis integration tests
+
+on:
+  workflow_call:
+    secrets:
+      token:
+        description: 'The GitHub/npm token'
+        required: true
+    inputs:
+      test_command:
+        description: 'The command to run the integration tests'
+        default: 'npm run test:ci'
+        required: false
+        type: string
+      postgres_user:
+        description: 'The Postgres user'
+        default: 'openphone'
+        required: false
+        type: string
+      postgres_password:
+        description: 'The Postgres password'
+        default: 'docker'
+        required: false
+        type: string
+
+jobs:
+  test-integration-rabbit-redis:
+    runs-on: ubuntu-latest
+
+    services:
+      postgres-svc:
+        image: postgres:13
+        env:
+          POSTGRES_USER: ${{ inputs.postgres_user }}
+          POSTGRES_PASSWORD: ${{ inputs.postgres_password }}
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+      redis-svc:
+        image: redislabs/rejson:latest
+        ports:
+          - 6379:6379
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+      rabbitmq:
+        image: rabbitmq:3.9.7-management
+        env:
+          RABBITMQ_DEFAULT_USER: openphone
+          RABBITMQ_DEFAULT_PASS: docker
+        ports:
+          - 5672:5672
+          - 15672:15672
+    steps:
+      - uses: actions/checkout@v3
+      - name: Setup node 16
+        uses: actions/setup-node@v3
+        with:
+          node-version: '16'
+          registry-url: https://npm.pkg.github.com/
+          scope: '@openphone'
+      - run: npm ci
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.token }}
+      - run: ${{ inputs.test_command }}
+        env:
+          ENVIRONMENT: test
+      - name: Codecov Uploader
+        uses: codecov/codecov-action@v3
