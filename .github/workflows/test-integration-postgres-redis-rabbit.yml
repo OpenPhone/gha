@@ -1,4 +1,4 @@
-name: Reusable workflow for running postgres (with prisma) with rabbit and redis integration tests
+name: Reusable workflow for running postgres with rabbit and redis integration tests
 
 on:
   workflow_call:
@@ -12,14 +12,54 @@ on:
         default: 'npm run test:ci'
         required: false
         type: string
+      setup_global_postgres:
+        description: 'Setup Postgres @openphone/database repo'
+        default: true
+        required: false
+        type: boolean
+      global_postgres_ref:
+        description: 'Branch of Postgres @openphone/database repo to use'
+        default: 'master'
+        required: false
+        type: string
+      migration_command:
+        description: 'The command to run the Postgres migrations'
+        default: 'npm run db:up'
+        required: false
+        type: string
+      skip_migration:
+        description: 'Whether or not the migrations should be skipped. Useful for when you want to run specific migration tests'
+        default: false
+        required: false
+        type: boolean
+      test_command:
+        description: 'The command to run the integration tests'
+        default: 'npm run test:ci'
+        required: false
+        type: string
+      postgres_version:
+        description: 'The version of Postgres to use'
+        default: '13'
+        required: false
+        type: string
       postgres_user:
         description: 'The Postgres user'
-        default: 'postgres'
+        default: 'openphone'
         required: false
         type: string
       postgres_password:
         description: 'The Postgres password'
         default: 'docker'
+        required: false
+        type: string
+      postgres_host:
+        description: 'The Postgres host'
+        default: 'localhost'
+        required: false
+        type: string
+      postgres_database:
+        description: 'The Postgres database'
+        default: 'openphone'
         required: false
         type: string
 
@@ -33,6 +73,7 @@ jobs:
         env:
           POSTGRES_USER: ${{ inputs.postgres_user }}
           POSTGRES_PASSWORD: ${{ inputs.postgres_password }}
+          POSTGRES_DB: ${{ inputs.postgres_database }}
         ports:
           - 5432:5432
         options: >-
@@ -68,6 +109,37 @@ jobs:
       - run: npm ci
         env:
           NODE_AUTH_TOKEN: ${{ secrets.token }}
+      # Setup of the global postgres database.
+      - name: actions/checkout@v3 @openphone/database
+        uses: actions/checkout@v3
+        if: ${{ inputs.setup_global_postgres && !inputs.skip_migration }}
+        with:
+          repository: 'OpenPhone/database'
+          ref: ${{ inputs.global_postgres_ref }}
+          path: 'database'
+          token: ${{ secrets.token }}
+
+      - name: migrate global postgres database
+        run: |
+          npm ci
+          npm run up
+        if: ${{ inputs.setup_global_postgres && !inputs.skip_migration }}
+        working-directory: 'database'
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.token }}
+          ENVIRONMENT: localdev
+          POSTGRES_HOST: ${{ inputs.postgres_host }}
+      # Run migrations against the local postgres database.
+      - run: ${{ inputs.migration_command }}
+        if: ${{ !inputs.setup_global_postgres && !inputs.skip_migration }}
+        env:
+          ENVIRONMENT: test
+          POSTGRES_HOST: ${{ inputs.postgres_host }}
+      # Test all the things!!!
+      - run: ${{ inputs.test_command }}
+        env:
+          ENVIRONMENT: test
+          POSTGRES_HOST: ${{ inputs.postgres_host }}
       - run: ${{ inputs.test_command }}
         env:
           ENVIRONMENT: test
