@@ -54,7 +54,7 @@ on:
         type: string
 
 jobs:
-  test-integration-rabbit-redis:
+  test-integration-postgres-rabbit-redis:
     runs-on: ubuntu-latest
 
     services:
