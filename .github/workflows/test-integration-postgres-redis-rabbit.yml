@@ -17,11 +17,6 @@ on:
         default: true
         required: false
         type: boolean
-      global_postgres_ref:
-        description: 'Branch of Postgres @openphone/database repo to use'
-        default: 'master'
-        required: false
-        type: string
       migration_command:
         description: 'The command to run the Postgres migrations'
         default: 'npm run db:up'
@@ -32,11 +27,6 @@ on:
         default: false
         required: false
         type: boolean
-      test_command:
-        description: 'The command to run the integration tests'
-        default: 'npm run test:ci'
-        required: false
-        type: string
       postgres_version:
         description: 'The version of Postgres to use'
         default: '13'
