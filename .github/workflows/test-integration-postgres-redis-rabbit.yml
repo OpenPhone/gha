@@ -14,7 +14,7 @@ on:
         type: string
       postgres_user:
         description: 'The Postgres user'
-        default: 'openphone'
+        default: 'postgres'
         required: false
         type: string
       postgres_password:
