@@ -1,0 +1,68 @@
+name: Reusable workflow for running elastic for integration tests
+
+on:
+  workflow_call:
+    secrets:
+      token:
+        description: 'The GitHub/npm token'
+        required: true
+    inputs:
+      elastic_password:
+        description: 'The Elastic password'
+        default: 'changeme'
+        required: false
+        type: string
+      elastic_url:
+        description: 'The Elastic host url'
+        default: 'http://localhost:9200'
+        required: false
+        type: string
+
+jobs:
+  test-integration-elastic:
+    runs-on: ubuntu-22.04
+
+    services:
+      elasticsearch:
+        image: docker.elastic.co/elasticsearch/elasticsearch:8.1.2
+        env:
+          STACK_VERSION: 8.1.2
+          ELASTIC_PASSWORD: ${{ inputs.elastic_password }}
+          discovery.type: single-node
+          xpack.security.enabled: false
+        ports:
+          - 9200:9200
+        options: >-
+          --health-cmd "curl http://localhost:9200/_cluster/health"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 10
+
+    steps:
+      - uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+          registry-url: https://npm.pkg.github.com/
+          scope: '@openphone'
+          cache: 'npm'
+      - uses: actions/checkout@v3
+      - uses: actions/cache@v3
+        id: cache
+        with:
+          path: ./node_modules
+          key: modules-${{ hashFiles('package-lock.json') }}
+      - run: npm ci
+        if: steps.cache.outputs.cache-hit != 'true'
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.token }}
+      - run: npm run elastic:up
+        env:
+          ELASTIC_URL: ${{ inputs.elastic_url }}
+          ELASTIC_PASSWORD: ${{ inputs.elastic_password }}
+      - run: ${{ inputs.test_command }} # Test all the things!!!
+        env:
+          ENVIRONMENT: test
+          POSTGRES_HOST: ${{ inputs.postgres_host }}
+          ELASTIC_URL: ${{ inputs.elastic_url }}
+          ELASTIC_PASSWORD: ${{ inputs.elastic_password }}
+      - uses: codecov/codecov-action@v3
