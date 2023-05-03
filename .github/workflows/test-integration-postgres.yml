@@ -74,18 +74,18 @@ jobs:
 
     steps:
       - name: Setup node 16
-        uses: actions/setup-node@v1
+        uses: actions/setup-node@v3
         with:
           node-version: '16'
           registry-url: https://npm.pkg.github.com/
           scope: '@openphone'
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - run: npm ci
         env:
           NODE_AUTH_TOKEN: ${{secrets.token}}
       # Setup of the global postgres database.
-      - name: actions/checkout@v2 @openphone/database
-        uses: actions/checkout@v2
+      - name: actions/checkout@v3 @openphone/database
+        uses: actions/checkout@v3
         if: ${{ inputs.setup_global_postgres && !inputs.skip_migration }}
         with:
           repository: 'OpenPhone/database'
