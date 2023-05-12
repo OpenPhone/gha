@@ -45,7 +45,7 @@ jobs:
         id: check_eslint_config
         uses: andstor/file-existence-action@v2
         with:
-          files: .eslintrc.js
+          files: ".eslintrc.js"
       - name: Lint
         if: steps.check_eslint_config.outputs.files_exist == 'true'
         run: npm run lint
