@@ -2,6 +2,10 @@ name: Build Application
 
 on:
   workflow_call:
+    secrets:
+      token:
+        description: 'The GitHub/npm token'
+        required: true
     inputs:
       working-directory:
         description: 'The directory containing package.json'
