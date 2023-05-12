@@ -16,6 +16,9 @@ jobs:
   build:
     name: Build
     runs-on: ubuntu-22.04
+    defaults:
+      run:
+        working-directory: ${{ inputs.working-directory }}
     steps:
       - name: Git Checkout
         uses: actions/checkout@v3
