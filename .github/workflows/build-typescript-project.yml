@@ -1,0 +1,43 @@
+name: Build Application
+
+on:
+  workflow_call:
+
+jobs:
+  build:
+    name: Build
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Git Checkout
+        uses: actions/checkout@v3
+      - name: Install node 18
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+          registry-url: https://npm.pkg.github.com/
+          scope: '@openphone'
+          cache: 'npm'
+          cache-dependency-path: '**/package-lock.json'
+      - name: Get cached dependencies
+        id: cache
+        uses: actions/cache@v3
+        with:
+          path: ./node_modules
+          key: modules-${{ hashFiles('package-lock.json') }}
+      - name: Install dependencies
+        if: steps.cache.outputs.cache-hit != 'true'
+        run: npm ci
+        env:
+          NODE_AUTH_TOKEN: ${{secrets.GPR_ACCESS_TOKEN}}
+      - name: Check eslint config
+        id: check_eslint_config
+        uses: andstor/file-existence-action@v2
+        with:
+          files: .eslintrc.js
+      - name: Lint
+        if: steps.check_eslint_config.outputs.files_exist == 'true'
+        run: npm run lint
+      - name: Compile
+        run: npm run build
+      - name: Check import
+        run: node .
