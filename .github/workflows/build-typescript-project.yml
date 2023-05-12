@@ -2,6 +2,11 @@ name: Build Application
 
 on:
   workflow_call:
+    inputs:
+      working-directory:
+        description: 'The directory containing package.json'
+        default: '.'
+        type: 'string'
 
 jobs:
   build:
