@@ -7,6 +7,11 @@ on:
         description: 'The GitHub/npm token'
         required: true
     inputs:
+      test_command:
+        description: 'The command to run the integration tests'
+        default: 'npm run test:ci'
+        required: false
+        type: string
       elastic_password:
         description: 'The Elastic password'
         default: 'changeme'
