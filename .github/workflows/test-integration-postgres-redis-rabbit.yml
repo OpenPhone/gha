@@ -130,8 +130,5 @@ jobs:
         env:
           ENVIRONMENT: test
           POSTGRES_HOST: ${{ inputs.postgres_host }}
-      - run: ${{ inputs.test_command }}
-        env:
-          ENVIRONMENT: test
       - name: Codecov Uploader
         uses: codecov/codecov-action@v3
