@@ -164,6 +164,8 @@ jobs:
         env:
           ENVIRONMENT: test
           POSTGRES_HOST: ${{ inputs.postgres_host }}
+          ELASTIC_URL: ${{ inputs.elastic_url }}
+          ELASTIC_PASSWORD: ${{ inputs.elastic_password }}
       # Upload the coverage report to codecov.io.
       - name: Codecov Uploader
         uses: codecov/codecov-action@v3
