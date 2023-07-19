@@ -163,7 +163,10 @@ jobs:
       - run: ${{ inputs.test_command }}
         env:
           ENVIRONMENT: test
-          POSTGRES_HOST: ${{ inputs.postgres_host }}
+          PG_HOST: ${{ inputs.postgres_host }}
+          PG_USERNAME: ${{ inputs.postgres_user }}
+          PG_DATABASE: ${{ inputs.postgres_database }}
+          PG_PASSWORD: ${{ inputs.postgres_password }}
           ELASTIC_URL: ${{ inputs.elastic_url }}
           ELASTIC_PASSWORD: ${{ inputs.elastic_password }}
       # Upload the coverage report to codecov.io.
