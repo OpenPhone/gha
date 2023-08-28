@@ -17,8 +17,17 @@ jobs:
     needs: getver
     if: github.event_name == 'push'
     steps:
+      - name: Lint
+        run: npm run lint
+
+      - name: Typecheck
+        run: npm run typecheck
+
       - name: Build
-        uses: OpenPhone/gha/.github/workflows/build-typescript-project.yml@v4
+        run: npm run build
+
+      - name: Run
+        run: node .
 
       - name: Publish
         uses: OpenPhone/gha/.github/actions/publish@v4

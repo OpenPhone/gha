@@ -21,7 +21,10 @@ jobs:
         working-directory: ./types
     steps:
       - name: Build
-        uses: OpenPhone/gha/.github/workflows/build-typescript-project-types.yml@v4
+        run: npm run build
+
+      - name: Test
+        run: npm node .
 
       - name: Publish
         uses: OpenPhone/gha/.github/actions/publish@v4
