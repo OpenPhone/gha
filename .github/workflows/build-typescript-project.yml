@@ -20,13 +20,15 @@ jobs:
           scope: '@openphone'
           cache: npm
           cache-dependency-path: '**/package-lock.json'
-      - name: Cache dependencies
-        id: cache
+      - name: Cache node modules
+        id: cache-npm
         uses: actions/cache@v3
+        env:
+          cache-name: cache-node-modules
         with:
           path: ~/.npm
-          key: modules-${{ hashFiles('package-lock.json') }}
-      - if: steps.cache.outputs.cache-hit != 'true'
+          key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/package-lock.json') }}
+      - if: steps.cache-npm.outputs.cache-hit != 'true'
         run: npm ci
         env:
           NODE_AUTH_TOKEN: ${{secrets.token}}
