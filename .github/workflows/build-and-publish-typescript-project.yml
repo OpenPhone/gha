@@ -17,6 +17,11 @@ jobs:
     needs: getver
     if: github.event_name == 'push'
     steps:
+      - name: Setup
+        uses: OpenPhone/gha/.github/actions/setup@v4
+        with:
+          token: ${{ secrets.token }}
+
       - name: Lint
         run: npm run lint
 
