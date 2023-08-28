@@ -13,7 +13,7 @@ jobs:
     runs-on: ubuntu-22.04
     steps:
       - name: Setup
-        uses: OpenPhone/gha/.github/actions/setup@common-actions
+        uses: OpenPhone/gha/.github/actions/setup@v4
         with:
           token: ${{ secrets.token }}
 
