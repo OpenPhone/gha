@@ -1,0 +1,12 @@
+name: Get GitHub SHA
+
+outputs:
+  sha:
+    value: ${{ steps.getsha.outputs.sha }}
+
+runs:
+  using: "composite"
+  steps:
+    - id: getsha
+      shell: bash
+      run: echo "sha=${GITHUB_SHA::8}" >> $GITHUB_OUTPUT

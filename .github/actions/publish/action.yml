@@ -1,0 +1,16 @@
+name: Set Version And Publish
+
+inputs:
+  version:
+    required: true
+  token:
+    required: true
+
+runs:
+  using: "composite"
+  steps:
+    - name: Set Version
+      run: npm version "${{ inputs.version }}" --no-git-tag-version --no-commit-hooks
+    - run: npm publish
+      env:
+        NODE_AUTH_TOKEN: ${{ inputs.token }}

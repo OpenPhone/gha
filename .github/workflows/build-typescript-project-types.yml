@@ -1,0 +1,22 @@
+name: Build Types
+
+on:
+  workflow_call:
+    secrets:
+      token:
+        description: 'The GitHub/npm token'
+        required: true
+
+jobs:
+  build-types:
+    name: Build Types
+    runs-on: ubuntu-22.04
+    defaults:
+      run:
+        working-directory: ./types
+    steps:
+      - uses: OpenPhone/gha/.github/actions/setup@common-actions
+        with:
+          token: ${{ secrets.token }}
+      - run: npm run build
+      - run: npm run test

@@ -1,0 +1,24 @@
+name: Build Application
+
+on:
+  workflow_call:
+    secrets:
+      token:
+        description: 'The GitHub/npm token'
+        required: true
+
+jobs:
+  getver:
+    uses: OpenPhone/gha/.github/actions/getver@common-actions
+
+  build:
+    name: Build and Publish Types
+    runs-on: ubuntu-22.04
+    needs: getver
+    if: github.event_name == 'push'
+    steps:
+      - uses: OpenPhone/gha/.github/workflows/build-typescript-project.yml@common-actions
+      - uses: OpenPhone/gha/.github/actions/publish@common-actions
+        with:
+          token: ${{ inputs.token }}
+          version: ${{ needs.getver.outputs.version }}

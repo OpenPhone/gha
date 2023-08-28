@@ -1,0 +1,19 @@
+name: Get Version from Tag
+
+on:
+  workflow_call:
+    outputs:
+      version:
+        value: ${{ jobs.getver.outputs.version }}
+
+jobs:
+  getver:
+    name: Get Version
+    runs-on: ubuntu-22.04
+
+    outputs:
+      version: ${{ steps.getver.outputs.version }}
+
+    steps:
+      - id: getver
+        uses: OpenPhone/gha/.github/actions/getver@common-actions

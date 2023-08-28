@@ -1,0 +1,21 @@
+name: Build Application
+
+on:
+  workflow_call:
+    secrets:
+      token:
+        description: 'The GitHub/npm token'
+        required: true
+
+jobs:
+  build:
+    name: Build
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: OpenPhone/gha/.github/actions/setup@common-actions
+        with:
+          token: ${{ secrets.token }}
+      - run: npm run lint
+      - run: npm run typecheck
+      - run: npm run build
+      - run: node .

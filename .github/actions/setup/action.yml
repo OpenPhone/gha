@@ -1,0 +1,31 @@
+name: Setup Runtime and Dependencies
+
+inputs:
+  token:
+    required: true
+
+runs:
+  using: "composite"
+  steps:
+    - name: Setup node 18
+      uses: actions/setup-node@v3
+      with:
+        node-version: '18'
+        registry-url: https://npm.pkg.github.com/
+        scope: '@openphone'
+
+    - uses: actions/checkout@v3
+
+    - name: Cache dependencies
+      id: cache
+      uses: actions/cache@v3
+      with:
+        path: ./node_modules
+        key: modules-${{ hashFiles('package-lock.json') }}
+
+    - name: Run CI
+      if: steps.cache.outputs.cache-hit != 'true'
+      run: npm ci
+      shell: bash
+      env:
+        NODE_AUTH_TOKEN: ${{inputs.token}}
