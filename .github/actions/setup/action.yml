@@ -14,7 +14,8 @@ runs:
         registry-url: https://npm.pkg.github.com/
         scope: '@openphone'
 
-    - uses: actions/checkout@v3
+    - name: Checkout
+      uses: actions/checkout@v3
 
     - name: Cache dependencies
       id: cache

@@ -12,10 +12,15 @@ jobs:
     name: Build
     runs-on: ubuntu-22.04
     steps:
-      - uses: OpenPhone/gha/.github/actions/setup@common-actions
+      - name: Setup
+        uses: OpenPhone/gha/.github/actions/setup@common-actions
         with:
           token: ${{ secrets.token }}
-      - run: npm run lint
-      - run: npm run typecheck
-      - run: npm run build
-      - run: node .
+      - name: Lint
+        run: npm run lint
+      - name: Typecheck
+        run: npm run typecheck
+      - name: Build
+        run: npm run build
+      - name: Run
+        run: node .
