@@ -16,4 +16,5 @@ jobs:
 
     steps:
       - id: getsha
-        uses: OpenPhone/gha/.github/actions/getsha@common-actions
+        shell: bash
+        run: echo "sha=${GITHUB_SHA::8}" >> $GITHUB_OUTPUT

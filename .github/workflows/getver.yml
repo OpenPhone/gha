@@ -12,8 +12,10 @@ jobs:
     runs-on: ubuntu-22.04
 
     outputs:
-      version: ${{ steps.getver.outputs.version }}
+      version: ${{ steps.vertag.outputs.version }}
 
     steps:
-      - id: getver
-        uses: OpenPhone/gha/.github/actions/getver@common-actions
+      - id: vertag
+        shell: bash
+        if: startsWith(github.ref, 'refs/tags/v')
+        run: echo "version=${GITHUB_REF/refs\/tags\/v/}" >> $GITHUB_OUTPUT

@@ -9,7 +9,7 @@ on:
 
 jobs:
   getver:
-    uses: OpenPhone/gha/.github/actions/getver@common-actions
+    uses: OpenPhone/gha/.github/workflows/getver.yml@common-actions
 
   build:
     name: Build and Publish Types
