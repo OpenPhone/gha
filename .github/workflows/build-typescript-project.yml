@@ -1,0 +1,37 @@
+
+
+name: Test on pull request
+
+on:
+  workflow_call:
+    secrets:
+      token:
+        description: 'The GitHub/npm token'
+        required: true
+jobs:
+  build:
+    name: Build
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+          registry-url: https://npm.pkg.github.com/
+          scope: '@openphone'
+          cache: npm
+          cache-dependency-path: '**/package-lock.json'
+      - name: Cache dependencies
+        id: cache
+        uses: actions/cache@v3
+        with:
+          path: ./node_modules
+          key: modules-${{ hashFiles('package-lock.json') }}
+      - if: steps.cache.outputs.cache-hit != 'true'
+        run: npm ci
+        env:
+          NODE_AUTH_TOKEN: ${{secrets.token}}
+      - run: npm run lint
+      - run: npm run typecheck
+      - run: npm run build
+      - run: node
