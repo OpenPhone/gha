@@ -1,6 +1,4 @@
-
-
-name: Test on pull request
+name: Build Application
 
 on:
   workflow_call:
@@ -8,6 +6,7 @@ on:
       token:
         description: 'The GitHub/npm token'
         required: true
+
 jobs:
   build:
     name: Build
@@ -25,7 +24,7 @@ jobs:
         id: cache
         uses: actions/cache@v3
         with:
-          path: ./node_modules
+          path: ~/.npm
           key: modules-${{ hashFiles('package-lock.json') }}
       - if: steps.cache.outputs.cache-hit != 'true'
         run: npm ci
@@ -34,4 +33,4 @@ jobs:
       - run: npm run lint
       - run: npm run typecheck
       - run: npm run build
-      - run: node
+      - run: node .

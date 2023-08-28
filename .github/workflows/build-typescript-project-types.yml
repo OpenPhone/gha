@@ -1,6 +1,4 @@
-
-
-name: Test on pull request
+name: Build Types
 
 on:
   workflow_call:
@@ -8,6 +6,7 @@ on:
       token:
         description: 'The GitHub/npm token'
         required: true
+
 jobs:
   build-types:
     name: Build Types
