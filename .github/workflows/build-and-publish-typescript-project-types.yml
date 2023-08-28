@@ -20,8 +20,16 @@ jobs:
       run:
         working-directory: ./types
     steps:
+      - name: Setup
+        uses: OpenPhone/gha/.github/actions/setup@v4
+        with:
+          token: ${{ secrets.token }}
+
       - name: Build
-        uses: OpenPhone/gha/.github/workflows/build-typescript-project-types.yml@v4
+        run: npm run build
+
+      - name: Test
+        run: npm node .
 
       - name: Publish
         uses: OpenPhone/gha/.github/actions/publish@v4
