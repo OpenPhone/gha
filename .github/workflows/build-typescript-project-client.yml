@@ -1,0 +1,30 @@
+name: Build Client
+
+on:
+  workflow_call:
+    secrets:
+      token:
+        description: 'The GitHub/npm token'
+        required: true
+
+jobs:
+  build-client:
+    name: Build Client
+    runs-on: ubuntu-22.04
+    defaults:
+      run:
+        working-directory: ./client
+    steps:
+      - name: Setup
+        uses: OpenPhone/gha/.github/actions/setup@v4
+        with:
+          token: ${{ secrets.token }}
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Build
+        run: npm run build
+
+      - name: Test
+        run: npm node .

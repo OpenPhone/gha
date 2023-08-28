@@ -1,0 +1,20 @@
+name: Get GitHub SHA
+
+on:
+  workflow_call:
+    outputs:
+      sha:
+        value: ${{ jobs.getsha.outputs.sha }}
+
+jobs:
+  getsha:
+    name: Get SHA
+    runs-on: ubuntu-22.04
+
+    outputs:
+      sha: ${{ steps.getsha.outputs.sha }}
+
+    steps:
+      - id: getsha
+        shell: bash
+        run: echo "sha=${GITHUB_SHA::8}" >> $GITHUB_OUTPUT
