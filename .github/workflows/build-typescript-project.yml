@@ -25,8 +25,8 @@ jobs:
         id: cache
         uses: actions/cache@v3
         with:
-            path: ./node_modules
-            key: modules-${{ hashFiles('package-lock.json') }}
+          path: ./node_modules
+          key: modules-${{ hashFiles('package-lock.json') }}
 
       - name: Run CI
         if: steps.cache.outputs.cache-hit != 'true'
