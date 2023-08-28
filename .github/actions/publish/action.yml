@@ -11,6 +11,8 @@ runs:
   steps:
     - name: Set Version
       run: npm version "${{ inputs.version }}" --no-git-tag-version --no-commit-hooks
-    - run: npm publish
+
+    - name: Publish
+      run: npm publish
       env:
         NODE_AUTH_TOKEN: ${{ inputs.token }}

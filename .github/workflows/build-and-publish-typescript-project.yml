@@ -17,8 +17,11 @@ jobs:
     needs: getver
     if: github.event_name == 'push'
     steps:
-      - uses: OpenPhone/gha/.github/workflows/build-typescript-project.yml@common-actions
-      - uses: OpenPhone/gha/.github/actions/publish@common-actions
+      - name: Build
+        uses: OpenPhone/gha/.github/workflows/build-typescript-project.yml@common-actions
+
+      - name: Publish
+        uses: OpenPhone/gha/.github/actions/publish@common-actions
         with:
           token: ${{ inputs.token }}
           version: ${{ needs.getver.outputs.version }}

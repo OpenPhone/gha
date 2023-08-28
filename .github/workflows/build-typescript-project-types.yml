@@ -15,8 +15,13 @@ jobs:
       run:
         working-directory: ./types
     steps:
-      - uses: OpenPhone/gha/.github/actions/setup@common-actions
+      - name: Setup
+        uses: OpenPhone/gha/.github/actions/setup@common-actions
         with:
           token: ${{ secrets.token }}
-      - run: npm run build
-      - run: npm run test
+
+      - name: Build
+        run: npm run build
+
+      - name: Test
+        run: npm node .
