@@ -1,0 +1,21 @@
+name: Get Version from Tag
+
+on:
+  workflow_call:
+    outputs:
+      version:
+        value: ${{ jobs.getver.outputs.version }}
+
+jobs:
+  getver:
+    name: Get Version
+    runs-on: ubuntu-22.04
+
+    outputs:
+      version: ${{ steps.vertag.outputs.version }}
+
+    steps:
+      - id: vertag
+        shell: bash
+        if: startsWith(github.ref, 'refs/tags/v')
+        run: echo "version=${GITHUB_REF/refs\/tags\/v/}" >> $GITHUB_OUTPUT
