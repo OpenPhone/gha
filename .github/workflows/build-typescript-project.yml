@@ -12,26 +12,28 @@ jobs:
     name: Build
     runs-on: ubuntu-22.04
     steps:
-      - uses: actions/checkout@v3
-      - uses: actions/setup-node@v3
+      - name: Setup node 18
+        uses: actions/setup-node@v3
         with:
           node-version: '18'
           registry-url: https://npm.pkg.github.com/
           scope: '@openphone'
-          cache: npm
-          cache-dependency-path: '**/package-lock.json'
-      - name: Cache node modules
-        id: cache-npm
-        uses: actions/cache@v3
-        env:
-          cache-name: cache-node-modules
+
+      - uses: actions/checkout@v3
+
+      - name: Cache dependencies
+        id: cache
+        uses: actions/cache@v2
         with:
-          path: ~/.npm
-          key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/package-lock.json') }}
-      - if: steps.cache-npm.outputs.cache-hit != 'true'
+            path: ./node_modules
+            key: modules-${{ hashFiles('package-lock.json') }}
+
+      - name: Run CI
+        if: steps.cache.outputs.cache-hit != 'true'
         run: npm ci
         env:
           NODE_AUTH_TOKEN: ${{secrets.token}}
+
       - run: npm run lint
       - run: npm run typecheck
       - run: npm run build
