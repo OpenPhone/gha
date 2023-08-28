@@ -16,11 +16,15 @@ jobs:
         uses: OpenPhone/gha/.github/actions/setup@common-actions
         with:
           token: ${{ secrets.token }}
+
       - name: Lint
         run: npm run lint
+
       - name: Typecheck
         run: npm run typecheck
+
       - name: Build
         run: npm run build
+
       - name: Run
         run: node .
