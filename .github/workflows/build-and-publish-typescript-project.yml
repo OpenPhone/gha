@@ -12,7 +12,7 @@ jobs:
     uses: OpenPhone/gha/.github/workflows/getver.yml@v4
 
   build:
-    name: Build and Publish Types
+    name: Build and Publish
     runs-on: ubuntu-22.04
     needs: getver
     if: github.event_name == 'push'
@@ -37,5 +37,5 @@ jobs:
       - name: Publish
         uses: OpenPhone/gha/.github/actions/publish@v4
         with:
-          token: ${{ inputs.token }}
+          token: ${{ secrets.token }}
           version: ${{ needs.getver.outputs.version }}
