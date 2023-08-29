@@ -84,11 +84,11 @@ jobs:
           aws eks --region ${{ secrets.aws_default_region }} \
           update-kubeconfig --name ${{ secrets.clustername }}
       - name: Create GitHub deployment
-        uses: chrnorm/deployment-action@releases/v1
+        uses: chrnorm/deployment-action@v2
         id: deployment
         with:
           token: "${{ github.token }}"
-          target_url: "${{ inputs.target_url }}"
+          environment-url: "${{ inputs.target_url }}"
           environment: ${{ inputs.deploy_env }}
       - name: Form helm command
         run: |
@@ -109,17 +109,17 @@ jobs:
           $HELM_CMD
       - name: Update deployment status (success)
         if: success()
-        uses: chrnorm/deployment-status@releases/v1
+        uses: chrnorm/deployment-status@v2
         with:
           token: "${{ github.token }}"
-          target_url: "${{ inputs.target_url }}"
+          environment-url: "${{ inputs.target_url }}"
           state: "success"
-          deployment_id: ${{ steps.deployment.outputs.deployment_id }}
+          deployment-id: ${{ steps.deployment.outputs.deployment_id }}
       - name: Update deployment status (failure)
         if: failure()
-        uses: chrnorm/deployment-status@releases/v1
+        uses: chrnorm/deployment-status@v2
         with:
           token: "${{ github.token }}"
-          target_url: "${{ inputs.target_url }}"
+          environment-url: "${{ inputs.target_url }}"
           state: "failure"
-          deployment_id: ${{ steps.deployment.outputs.deployment_id }}
+          deployment-id: ${{ steps.deployment.outputs.deployment_id }}
