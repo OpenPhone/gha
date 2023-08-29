@@ -20,8 +20,19 @@ jobs:
       run:
         working-directory: ./client
     steps:
+      - name: Setup
+        uses: OpenPhone/gha/.github/actions/setup@v4
+        with:
+          token: ${{ secrets.token }}
+
+      - name: Lint
+        run: npm run lint
+
       - name: Build
-        uses: OpenPhone/gha/.github/workflows/build-typescript-project-client.yml@v4
+        run: npm run build
+
+      - name: Test
+        run: npm node .
 
       - name: Publish
         uses: OpenPhone/gha/.github/actions/publish@v4
