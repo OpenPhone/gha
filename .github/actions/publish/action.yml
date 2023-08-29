@@ -10,6 +10,7 @@ runs:
   using: "composite"
   steps:
     - name: Set Version
+      shell: bash
       run: npm version "${{ inputs.version }}" --no-git-tag-version --no-commit-hooks
 
     - name: Publish
