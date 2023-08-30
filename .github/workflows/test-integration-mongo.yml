@@ -32,22 +32,28 @@ on:
         default: 'openphone'
         required: false
         type: string
+      working-directory:
+        description: 'The path to the directory to run commands'
+        required: false
+        type: string
+        default: ./
 
 jobs:
   test-integration-mongo:
     runs-on: ubuntu-latest
 
     steps:
+      - name: Setup
+        uses: OpenPhone/gha/.github/actions/setup@v5
+        with:
+          token: ${{ secrets.token }}
+          working-directory: ${{inputs.working-directory}}
       - uses: supercharge/mongodb-github-action@1.7.0
         with:
           mongodb-version: ${{ inputs.mongo_version }}
           mongodb-username: ${{ inputs.mongo_username }}
           mongodb-password: ${{ inputs.mongo_password }}
           mongodb-db: ${{ inputs.mongo_db }}
-      - uses: actions/checkout@v3
-      - run: npm ci
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.token }}
       - run: ${{ inputs.test_command }}
         env:
           ENVIRONMENT: test

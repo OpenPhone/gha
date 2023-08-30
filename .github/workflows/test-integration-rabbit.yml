@@ -12,6 +12,11 @@ on:
         default: 'npm run test:ci'
         required: false
         type: string
+      working-directory:
+        description: 'The path to the directory to run commands'
+        required: false
+        type: string
+        default: ./
 
 jobs:
   test-integration-rabbit:
@@ -28,16 +33,11 @@ jobs:
           - 15672:15672
 
     steps:
-      - uses: actions/checkout@v3
-      - name: Setup node 18
-        uses: actions/setup-node@v3
+      - name: Setup
+        uses: OpenPhone/gha/.github/actions/setup@v5
         with:
-          node-version: '18'
-          registry-url: https://npm.pkg.github.com/
-          scope: '@openphone'
-      - run: npm ci
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.token }}
+          token: ${{ secrets.token }}
+          working-directory: ${{inputs.working-directory}}
       - run: ${{ inputs.test_command }}
         env:
           ENVIRONMENT: test

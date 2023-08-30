@@ -9,21 +9,24 @@ on:
 
 jobs:
   getver:
-    uses: OpenPhone/gha/.github/workflows/getver.yml@v4
+    uses: OpenPhone/gha/.github/workflows/getver.yml@v5
 
   build-client:
     name: Build and Publish Client
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-latest
     needs: getver
     if: github.event_name == 'push'
+    env:
+      working-directory: ./client
     defaults:
       run:
-        working-directory: ./client
+        working-directory: ${{env.working-directory}}
     steps:
       - name: Setup
-        uses: OpenPhone/gha/.github/actions/setup@v4
+        uses: OpenPhone/gha/.github/actions/setup@v5
         with:
           token: ${{ secrets.token }}
+          working-directory: ${{env.working-directory}}
 
       - name: Lint
         run: npm run lint
@@ -32,10 +35,11 @@ jobs:
         run: npm run build
 
       - name: Test
-        run: npm node .
+        run: npm run test
 
       - name: Publish
-        uses: OpenPhone/gha/.github/actions/publish@v4
+        uses: OpenPhone/gha/.github/actions/publish@v5
         with:
           token: ${{ secrets.token }}
           version: ${{ needs.getver.outputs.version }}
+          working-directory: ${{env.working-directory}}

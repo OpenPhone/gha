@@ -10,18 +10,21 @@ on:
 jobs:
   build-types:
     name: Build Types
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-latest
+    env:
+      working-directory: ./types
     defaults:
       run:
-        working-directory: ./types
+        working-directory: ${{env.working-directory}}
     steps:
       - name: Setup
-        uses: OpenPhone/gha/.github/actions/setup@v4
+        uses: OpenPhone/gha/.github/actions/setup@v5
         with:
           token: ${{ secrets.token }}
+          working-directory: ${{env.working-directory}}
 
       - name: Build
         run: npm run build
 
       - name: Test
-        run: npm node .
+        run: npm run test
