@@ -13,7 +13,7 @@ jobs:
 
   build-client:
     name: Build and Publish Client
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-latest
     needs: getver
     if: github.event_name == 'push'
     defaults:

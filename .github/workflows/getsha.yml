@@ -9,7 +9,7 @@ on:
 jobs:
   getsha:
     name: Get SHA
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-latest
 
     outputs:
       sha: ${{ steps.getsha.outputs.sha }}

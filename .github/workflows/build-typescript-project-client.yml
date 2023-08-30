@@ -10,7 +10,9 @@ on:
 jobs:
   build-client:
     name: Build Client
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-latest
+    env:
+      working-directory: ./client
     defaults:
       run:
         working-directory: ./client

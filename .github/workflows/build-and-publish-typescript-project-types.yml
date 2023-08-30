@@ -13,7 +13,7 @@ jobs:
 
   build-types:
     name: Build and Publish Types
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-latest
     needs: getver
     if: github.event_name == 'push'
     defaults:

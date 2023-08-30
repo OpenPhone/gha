@@ -9,7 +9,7 @@ on:
 jobs:
   getver:
     name: Get Version
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-latest
 
     outputs:
       version: ${{ steps.vertag.outputs.version }}
