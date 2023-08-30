@@ -22,6 +22,11 @@ on:
         default: 'http://localhost:9200'
         required: false
         type: string
+      postgres_host:
+        description: 'The Postgres host'
+        default: 'localhost'
+        required: false
+        type: string
       working-directory:
         description: 'The path to the directory to run commands'
         required: false
