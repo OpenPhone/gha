@@ -9,7 +9,7 @@ on:
 
 jobs:
   getver:
-    uses: OpenPhone/gha/.github/workflows/getver.yml@v4
+    uses: OpenPhone/gha/.github/workflows/getver.yml@v5
 
   build:
     name: Build and Publish
@@ -23,7 +23,7 @@ jobs:
         working-directory: ${{env.working-directory}}
     steps:
       - name: Setup
-        uses: OpenPhone/gha/.github/actions/setup@v4
+        uses: OpenPhone/gha/.github/actions/setup@v5
         with:
           token: ${{ secrets.token }}
           working-directory: ${{env.working-directory}}
@@ -41,7 +41,7 @@ jobs:
         run: node .
 
       - name: Publish
-        uses: OpenPhone/gha/.github/actions/publish@v4
+        uses: OpenPhone/gha/.github/actions/publish@v5
         with:
           token: ${{ secrets.token }}
           version: ${{ needs.getver.outputs.version }}
