@@ -2,9 +2,13 @@ name: Set Version And Publish
 
 inputs:
   version:
+    description: 'The version to set in package.json and publish'
     required: true
+    type: string
   token:
+    description: 'The GitHub/npm token'
     required: true
+    type: string
   working-directory:
     description: 'The path to the directory to run commands'
     required: false

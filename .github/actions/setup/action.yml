@@ -2,7 +2,9 @@ name: Setup Runtime and Dependencies
 
 inputs:
   token:
+    description: 'The GitHub/npm token'
     required: true
+    type: string
   working-directory:
     description: 'The path to the directory to run commands'
     required: false

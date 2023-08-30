@@ -4,6 +4,7 @@ on:
   workflow_call:
     outputs:
       sha:
+        description: 'The GitHub SHA'
         value: ${{ jobs.getsha.outputs.sha }}
 
 jobs:
@@ -14,7 +15,10 @@ jobs:
     outputs:
       sha: ${{ steps.getsha.outputs.sha }}
 
+    defaults:
+      run:
+        shell: bash
+
     steps:
       - id: getsha
-        shell: bash
         run: echo "sha=${GITHUB_SHA::8}" >> $GITHUB_OUTPUT
