@@ -15,12 +15,13 @@ jobs:
       working-directory: ./client
     defaults:
       run:
-        working-directory: ./client
+        working-directory: ${{env.working-directory}}
     steps:
       - name: Setup
         uses: OpenPhone/gha/.github/actions/setup@v4
         with:
           token: ${{ secrets.token }}
+          working-directory: ${{env.working-directory}}
 
       - name: Lint
         run: npm run lint

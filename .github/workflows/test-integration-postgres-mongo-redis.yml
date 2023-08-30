@@ -77,6 +77,12 @@ on:
         default: 'openphone'
         required: false
         type: string
+      working-directory:
+        description: 'The path to the directory to run commands'
+        required: false
+        type: string
+        default: ./
+
 
 jobs:
   test-integration-postgres-mongo-redis:
@@ -107,12 +113,11 @@ jobs:
           --health-retries 5
 
     steps:
-      - name: Setup node 18
-        uses: actions/setup-node@v3
+      - name: Setup
+        uses: OpenPhone/gha/.github/actions/setup@v4
         with:
-          node-version: '18'
-          registry-url: https://npm.pkg.github.com/
-          scope: '@openphone'
+          token: ${{ secrets.token }}
+          working-directory: ${{inputs.working-directory}}
       - name: spool up mongo
         uses: supercharge/mongodb-github-action@1.7.0
         with:
@@ -121,24 +126,6 @@ jobs:
           mongodb-password: ${{ inputs.mongo_password }}
           mongodb-db: ${{ inputs.mongo_db }}
 
-      - uses: actions/checkout@v3
-
-      - name: Cache dependencies
-        id: cache
-        uses: actions/cache@v2
-        with:
-          path: ./node_modules
-          key: modules-${{ hashFiles('package-lock.json') }}
-
-      - name: Run CI
-        if: steps.cache.outputs.cache-hit != 'true'
-        run: npm ci
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.token }}
-      - name: Run Install
-        run: npm install
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.token }}
       # Setup of the global postgres database.
       - name: actions/checkout@v3 @openphone/database
         uses: actions/checkout@v3

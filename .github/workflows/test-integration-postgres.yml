@@ -52,6 +52,11 @@ on:
         default: 'openphone'
         required: false
         type: string
+      working-directory:
+        description: 'The path to the directory to run commands'
+        required: false
+        type: string
+        default: ./
 
 jobs:
   test-integration-postgres:
@@ -73,16 +78,11 @@ jobs:
           --health-retries 5
 
     steps:
-      - name: Setup node 18
-        uses: actions/setup-node@v3
+      - name: Setup
+        uses: OpenPhone/gha/.github/actions/setup@v4
         with:
-          node-version: '18'
-          registry-url: https://npm.pkg.github.com/
-          scope: '@openphone'
-      - uses: actions/checkout@v3
-      - run: npm ci
-        env:
-          NODE_AUTH_TOKEN: ${{secrets.token}}
+          token: ${{ secrets.token }}
+          working-directory: ${{inputs.working-directory}}
       # Setup of the global postgres database.
       - name: actions/checkout@v3 @openphone/database
         uses: actions/checkout@v3
