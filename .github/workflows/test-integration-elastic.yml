@@ -22,11 +22,6 @@ on:
         default: 'http://localhost:9200'
         required: false
         type: string
-      postgres_host:
-        description: 'The Postgres host'
-        default: 'localhost'
-        required: false
-        type: string
       working-directory:
         description: 'The path to the directory to run commands'
         required: false
@@ -66,7 +61,6 @@ jobs:
       - run: ${{ inputs.test_command }} # Test all the things!!!
         env:
           ENVIRONMENT: test
-          POSTGRES_HOST: ${{ inputs.postgres_host }}
           ELASTIC_URL: ${{ inputs.elastic_url }}
           ELASTIC_PASSWORD: ${{ inputs.elastic_password }}
       - uses: codecov/codecov-action@v3
