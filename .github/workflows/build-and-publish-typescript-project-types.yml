@@ -32,7 +32,7 @@ jobs:
         run: npm run build
 
       - name: Test
-        run: npm node .
+        run: npm run test
 
       - name: Publish
         uses: OpenPhone/gha/.github/actions/publish@v4
