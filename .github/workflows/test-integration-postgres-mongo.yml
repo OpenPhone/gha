@@ -99,7 +99,7 @@ jobs:
 
     steps:
       - name: Setup
-        uses: OpenPhone/gha/.github/actions/setup@v4
+        uses: OpenPhone/gha/.github/actions/setup@v5
         with:
           token: ${{ secrets.token }}
           working-directory: ${{inputs.working-directory}}

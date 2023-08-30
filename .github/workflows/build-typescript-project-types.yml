@@ -18,7 +18,7 @@ jobs:
         working-directory: ${{env.working-directory}}
     steps:
       - name: Setup
-        uses: OpenPhone/gha/.github/actions/setup@v4
+        uses: OpenPhone/gha/.github/actions/setup@v5
         with:
           token: ${{ secrets.token }}
           working-directory: ${{env.working-directory}}
