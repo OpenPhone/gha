@@ -22,10 +22,15 @@ on:
         default: 'http://localhost:9200'
         required: false
         type: string
+      working-directory:
+        description: 'The path to the directory to run commands'
+        required: false
+        type: string
+        default: ./
 
 jobs:
   test-integration-elastic:
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-latest
 
     services:
       elasticsearch:
@@ -44,22 +49,11 @@ jobs:
           --health-retries 10
 
     steps:
-      - uses: actions/checkout@v3
-      - uses: actions/setup-node@v3
+      - name: Setup
+        uses: OpenPhone/gha/.github/actions/setup@v4
         with:
-          node-version: '18'
-          registry-url: https://npm.pkg.github.com/
-          scope: '@openphone'
-          cache: 'npm'
-      - uses: actions/cache@v3
-        id: cache
-        with:
-          path: ./node_modules
-          key: modules-${{ hashFiles('package-lock.json') }}
-      - run: npm ci
-        if: steps.cache.outputs.cache-hit != 'true'
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.token }}
+          token: ${{ secrets.token }}
+          working-directory: ${{inputs.working-directory}}
       - run: npm run elastic:up
         env:
           ELASTIC_URL: ${{ inputs.elastic_url }}
@@ -67,7 +61,6 @@ jobs:
       - run: ${{ inputs.test_command }} # Test all the things!!!
         env:
           ENVIRONMENT: test
-          POSTGRES_HOST: ${{ inputs.postgres_host }}
           ELASTIC_URL: ${{ inputs.elastic_url }}
           ELASTIC_PASSWORD: ${{ inputs.elastic_password }}
       - uses: codecov/codecov-action@v3

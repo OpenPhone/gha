@@ -2,31 +2,41 @@ name: Setup Runtime and Dependencies
 
 inputs:
   token:
+    description: 'The GitHub/npm token'
     required: true
+    type: string
+  working-directory:
+    description: 'The path to the directory to run commands'
+    required: false
+    type: string
+    default: ./
 
 runs:
   using: "composite"
   steps:
+    - name: Checkout
+      uses: actions/checkout@v3
+
     - name: Setup node 18
       uses: actions/setup-node@v3
       with:
-        node-version: '18'
+        node-version: 18
         registry-url: https://npm.pkg.github.com/
         scope: '@openphone'
-
-    - name: Checkout
-      uses: actions/checkout@v3
 
     - name: Cache dependencies
       id: cache
       uses: actions/cache@v3
+      env:
+        lockfile-path: ${{inputs.working-directory}}/package-lock.json
       with:
-        path: ./node_modules
-        key: modules-${{ hashFiles('package-lock.json') }}
+        path: ${{inputs.working-directory}}/node_modules/
+        key: modules-${{hashFiles(format('{0}/package-lock.json', inputs.working-directory))}}
 
     - name: Run CI
       if: steps.cache.outputs.cache-hit != 'true'
       run: npm ci
+      working-directory: ${{inputs.working-directory}}
       shell: bash
       env:
         NODE_AUTH_TOKEN: ${{inputs.token}}
