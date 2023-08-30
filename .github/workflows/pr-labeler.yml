@@ -17,7 +17,7 @@ jobs:
   label-pr:
     runs-on: ubuntu-latest
     steps:
-      - uses: TimonVS/pr-labeler-action@v3
+      - uses: TimonVS/pr-labeler-action@v4
         with:
           configuration-path: ${{ inputs.configuration-path }}
         env:
