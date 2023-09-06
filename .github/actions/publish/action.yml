@@ -21,7 +21,7 @@ runs:
     - name: Set Version
       shell: bash
       working-directory: ${{ inputs.working-directory }}
-      run: npm version "${{ inputs.version }}" --no-git-tag-version --no-commit-hooks
+      run: npm version "${{ inputs.version }}" --no-git-tag-version --no-commit-hooks --allow-same-version
 
     - name: Publish
       shell: bash
