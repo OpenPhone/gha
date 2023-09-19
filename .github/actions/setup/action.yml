@@ -30,11 +30,10 @@ runs:
       env:
         lockfile-path: ${{inputs.working-directory}}/package-lock.json
       with:
-        path: ${{inputs.working-directory}}/node_modules/
+        path: ~/.npm
         key: modules-${{hashFiles(format('{0}/package-lock.json', inputs.working-directory))}}
 
     - name: Run CI
-      if: steps.cache.outputs.cache-hit != 'true'
       run: npm ci
       working-directory: ${{inputs.working-directory}}
       shell: bash
