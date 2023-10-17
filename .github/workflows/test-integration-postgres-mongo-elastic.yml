@@ -87,10 +87,16 @@ on:
         required: false
         type: string
         default: ./
+      timeout-minutes:
+        description: 'The max time to allow the action to run'
+        required: false
+        type: number
+        default: 10
 
 jobs:
   test-integration-postgres-mongo-elastic:
     runs-on: ubuntu-latest
+    timeout-minutes: ${{ inputs.timeout-minutes }} 
 
     services:
       postgres-svc:
