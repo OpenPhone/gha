@@ -79,7 +79,6 @@ jobs:
         with:
           repository: ${{ secrets.chart_repo }}
           path: ${{ secrets.checkout_path }}
-          fetch-depth: 0
           token: ${{ secrets.token }}
       - name: Setup kubeconfig
         env:

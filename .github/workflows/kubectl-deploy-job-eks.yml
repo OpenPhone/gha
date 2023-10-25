@@ -60,8 +60,6 @@ jobs:
     steps:
       - name: Checkout Code
         uses: actions/checkout@v3
-        with:
-          fetch-depth: 0
       - name: Setup kubeconfig
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.aws_access_key_id }}
@@ -70,7 +68,7 @@ jobs:
           aws eks --region ${{ secrets.aws_default_region }} \
           update-kubeconfig --name ${{ secrets.clustername }}
       - name: kubectl apply
-        env: 
+        env:
           AWS_ACCESS_KEY_ID: ${{ secrets.aws_access_key_id }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.aws_secret_access_key }}
           registry: ${{ inputs.registry }}${{ inputs.registry_path}}
