@@ -1,0 +1,14 @@
+name: 'Setup Matrix'
+description: 'Setup a test matrix'
+
+inputs:
+  shards:
+    description: 'Number of shards'
+    required: false
+    default: '1'
+outputs:
+  matrix:
+    description: 'The test matrix'
+runs:
+  using: 'node20'
+  main: 'index.js'
