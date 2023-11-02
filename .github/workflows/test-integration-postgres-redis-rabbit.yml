@@ -160,7 +160,7 @@ jobs:
           POSTGRES_HOST: ${{ inputs.postgres_host }}
       # Test all the things!!!
       - name: Run Integration Tests
-        run: ${{ inputs.test_command }} -- -- --shard=${{ matrix.shard }}/${{ strategy.job-total }}
+        run: ${{ inputs.test_command }} -- -- --shard=${{ matrix.shard }}
         env:
           ENVIRONMENT: test
           POSTGRES_HOST: ${{ inputs.postgres_host }}
