@@ -1,8 +1,6 @@
 const core = require('@actions/core');
 
 try {
-    // TODO remove 3 once getInput gets fixed
-    // https://github.com/actions/toolkit/issues/1576
     const numShards = core.getInput('shards') || 3
     const shards = []
 

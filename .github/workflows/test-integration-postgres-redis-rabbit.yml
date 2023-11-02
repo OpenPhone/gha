@@ -67,11 +67,30 @@ on:
         required: false
         type: number
         default: 10
+      shards:
+        description: 'The number of shards to use for Jest tests. Defaults to 1'
+        required: false
+        type: number
+        default: 1
 
 jobs:
-  test-integration-postgres-rabbit-redis:
+  setup-matrix:
+    name: Generate test matrix
     runs-on: ubuntu-latest
-    timeout-minutes: ${{ inputs.timeout-minutes }} 
+    outputs:
+      matrix-json: ${{ steps.setup-matrix.outputs.shards }}
+    steps:
+      - uses: actions/checkout@v2
+      - name: Setup matrix
+        id: setup-matrix
+        uses: OpenPhone/gha/.github/actions/setup-matrix@zach-voice-8352-leverage-github-action-matrix-for-jest-tests
+        with:
+          shards: ${{ inputs.shards }}
+
+  test-integration-postgres-rabbit-redis:
+    needs: [ setup-matrix ]
+    runs-on: ubuntu-latest
+    timeout-minutes: ${{ inputs.timeout-minutes }}
 
     services:
       postgres-svc:
@@ -104,6 +123,9 @@ jobs:
         ports:
           - 5672:5672
           - 15672:15672
+    strategy:
+      matrix:
+        include: ${{ fromJSON(needs.setup-matrix.outputs.matrix-json) }}
     steps:
       - name: Setup
         uses: OpenPhone/gha/.github/actions/setup@v5
@@ -137,9 +159,12 @@ jobs:
           ENVIRONMENT: test
           POSTGRES_HOST: ${{ inputs.postgres_host }}
       # Test all the things!!!
-      - run: ${{ inputs.test_command }}
+      - name: Run Integration Tests
+        run: ${{ inputs.test_command }} -- -- --shard=${{ matrix.shard }}
         env:
           ENVIRONMENT: test
           POSTGRES_HOST: ${{ inputs.postgres_host }}
       - name: Codecov Uploader
         uses: codecov/codecov-action@v3
+        with:
+          files: coverage/coverage-final.json
