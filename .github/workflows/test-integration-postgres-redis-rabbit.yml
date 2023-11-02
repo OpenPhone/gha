@@ -125,7 +125,7 @@ jobs:
           - 15672:15672
     strategy:
       matrix:
-        include: ${{ fromJSON(needs.setup-matrix.outputs.matrix-json) }}
+        shard: ${{ fromJSON(needs.setup-matrix.outputs.matrix-json) }}
     steps:
       - name: Setup
         uses: OpenPhone/gha/.github/actions/setup@v5
@@ -160,7 +160,7 @@ jobs:
           POSTGRES_HOST: ${{ inputs.postgres_host }}
       # Test all the things!!!
       - name: Run Integration Tests
-        run: ${{ inputs.test_command }} -- -- --shard=${{ matrix.shard }}
+        run: ${{ inputs.test_command }} -- -- --shard=${{ matrix.shard }}/${{ strategy.job-total }}
         env:
           ENVIRONMENT: test
           POSTGRES_HOST: ${{ inputs.postgres_host }}

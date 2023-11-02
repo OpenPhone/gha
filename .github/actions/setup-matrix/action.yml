@@ -9,6 +9,15 @@ inputs:
 outputs:
   shards:
     description: 'The test matrix shards'
+    value: ${{ steps.set-matrix.outputs.shards }}
 runs:
-  using: 'node20'
-  main: 'index.js'
+  using: 'composite'
+  steps:
+    - uses: actions/checkout@v2
+    - run: echo "${{ github.action_path }}" >> $GITHUB_PATH
+      shell: bash
+    - id: set-matrix
+      shell: pwsh
+      run: setup-matrix.ps1
+      env:
+        shards: ${{ inputs.shards }}
