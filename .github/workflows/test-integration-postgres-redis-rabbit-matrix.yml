@@ -71,14 +71,14 @@ on:
         description: 'The number of shards to use for Jest tests. Defaults to 1'
         required: false
         type: number
-        default: '1'
+        default: 1
 
 jobs:
   setup-matrix:
     name: Generate test matrix
     runs-on: ubuntu-latest
     outputs:
-      matrix-json: ${{ steps.setup-matrix.outputs.matrix }}
+      matrix-json: ${{ steps.setup-matrix.outputs.shards }}
     steps:
       - uses: actions/checkout@v2
       - name: Setup matrix
@@ -161,7 +161,7 @@ jobs:
           POSTGRES_HOST: ${{ inputs.postgres_host }}
       # Test all the things!!!
       - name: Run Integration Tests
-        run: ${{ inputs.test_command }} -- -- --shard=${{ matrix.number }}/${{ strategy.job-total }}
+        run: ${{ inputs.test_command }} -- -- --shard=${{ matrix.shard }}
         env:
           ENVIRONMENT: test
           POSTGRES_HOST: ${{ inputs.postgres_host }}

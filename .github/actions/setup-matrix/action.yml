@@ -7,8 +7,8 @@ inputs:
     required: false
     default: '1'
 outputs:
-  matrix:
-    description: 'The test matrix'
+  shards:
+    description: 'The test matrix shards'
 runs:
   using: 'node20'
   main: 'index.js'

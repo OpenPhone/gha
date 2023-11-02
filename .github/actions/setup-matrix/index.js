@@ -8,12 +8,12 @@ try {
 
     for (let i = 1; i <= numShards; i++) {
         shards.push({
-            number: i
+            shard: `${i}/${numShards}`
         })
     }
 
     console.log('Setting matrix shards:', shards)
-    core.setOutput("matrix", shards);
+    core.setOutput("shards", shards);
 } catch (error) {
     core.setFailed(error.message);
 }
