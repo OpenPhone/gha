@@ -1,8 +1,8 @@
 $Jobs = @()
 
-for (($i = 1); $i -le $Env:shards; $i++)
+for (($i = 1); $i -le $Env:shard_count; $i++)
 {
-    $Jobs += ""+$i+"/"+$Env:shards
+    $Jobs += ""+$i+"/"+$Env:shard_count
 }
 
 Write-Output "shards=$( $Jobs | ConvertTo-JSON -Compress )" >> $Env:GITHUB_OUTPUT

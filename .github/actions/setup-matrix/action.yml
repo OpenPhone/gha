@@ -2,7 +2,7 @@ name: 'Setup Matrix'
 description: 'Setup a test matrix'
 
 inputs:
-  shards:
+  shard_count:
     description: 'Number of shards'
     required: false
     default: '1'
@@ -20,4 +20,4 @@ runs:
       shell: pwsh
       run: setup-matrix.ps1
       env:
-        shards: ${{ inputs.shards }}
+        shard_count: ${{ inputs.shard_count }}

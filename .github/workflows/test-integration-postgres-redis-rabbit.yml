@@ -67,7 +67,7 @@ on:
         required: false
         type: number
         default: 10
-      shards:
+      shard_count:
         description: 'The number of shards to use for Jest tests. Defaults to 1'
         required: false
         type: number
@@ -85,7 +85,7 @@ jobs:
         id: setup-matrix
         uses: OpenPhone/gha/.github/actions/setup-matrix@zach-voice-8352-leverage-github-action-matrix-for-jest-tests
         with:
-          shards: ${{ inputs.shards }}
+          shard_count: ${{ inputs.shard_count }}
 
   test-integration-postgres-rabbit-redis:
     needs: [ setup-matrix ]
