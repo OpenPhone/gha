@@ -72,6 +72,11 @@ on:
         required: false
         type: number
         default: 1
+      runner:
+        description: 'The Github runner to use'
+        required: false
+        type: string
+        default: ubuntu-latest
 
 jobs:
   setup-matrix:
@@ -89,7 +94,7 @@ jobs:
 
   test-integration-postgres-rabbit-redis:
     needs: [ setup-matrix ]
-    runs-on: ubuntu-latest
+    runs-on: ${{ inputs.runner }}
     timeout-minutes: ${{ inputs.timeout-minutes }}
 
     services:
