@@ -52,8 +52,6 @@ jobs:
     steps:
       - name: Check out the repo
         uses: actions/checkout@v3
-        with:
-          fetch-depth: 0
       - name: Update json
         if: ${{ inputs.update_json }}
         run: |
