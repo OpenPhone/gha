@@ -97,7 +97,7 @@ jobs:
           environment: ${{ inputs.deploy_env }}
       - name: Form helm command
         run: |
-          cmd="helm upgrade --install --atomic ${{ inputs.chart_name }} ./ -f ${{ inputs.values_file }} --wait --timeout ${{ inputs.timeout }} --namespace ${{ inputs.helm_namespace }}"
+          cmd="helm upgrade --debug --install --atomic ${{ inputs.chart_name }} ./ -f ${{ inputs.values_file }} --wait --timeout ${{ inputs.timeout }} --namespace ${{ inputs.helm_namespace }}"
           IFS="," read -a extraval <<< "${{ inputs.values_extra }}"
           for i in "${extraval[@]}"; do
               echo "Adding set command for ${i}"
