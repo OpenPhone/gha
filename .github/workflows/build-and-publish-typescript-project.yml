@@ -37,9 +37,6 @@ jobs:
       - name: Build
         run: npm run build
 
-      - name: Run
-        run: node .
-
       - name: Publish
         uses: OpenPhone/gha/.github/actions/publish@v5
         with:
