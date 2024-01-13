@@ -40,27 +40,19 @@ jobs:
         with:
           token: ${{ secrets.token }}
 
-      - name: Get Latest Swagger UI Version
-        id: swagger-ui
-        run: |
-          release_tag=$(curl -sL https://api.github.com/repos/swagger-api/swagger-ui/releases/latest | jq -r ".tag_name")
-          echo "release_tag=$release_tag" >> $GITHUB_OUTPUT
-          current_tag=$(<docs/swagger-ui.version)
-          echo "current_tag=$current_tag" >> $GITHUB_OUTPUT
-
       - name: Update Swagger UI
-        if: steps.swagger-ui.outputs.current_tag != steps.swagger-ui.outputs.release_tag
         env:
-          RELEASE_TAG: ${{ steps.swagger-ui.outputs.release_tag }}
           SWAGGER_YAML: "openapi.json"
         run: |
           mkdir -p docs
           cd docs
+          release_tag=$(curl -sL https://api.github.com/repos/swagger-api/swagger-ui/releases/latest | jq -r ".tag_name")
+          echo "release_tag=$release_tag" >> $GITHUB_OUTPUT
           # Download the release
-          curl -sL -o $RELEASE_TAG https://api.github.com/repos/swagger-api/swagger-ui/tarball/$RELEASE_TAG
+          curl -sL -o $release_tag https://api.github.com/repos/swagger-api/swagger-ui/tarball/$release_tag
           # Extract the dist directory
-          tar -xzf $RELEASE_TAG --strip-components=1 $(tar -tzf $RELEASE_TAG | head -1 | cut -f1 -d"/")/dist
-          rm $RELEASE_TAG
+          tar -xzf $release_tag --strip-components=1 $(tar -tzf $release_tag | head -1 | cut -f1 -d"/")/dist
+          rm $release_tag
           # Move index.html to the root
           mv dist/index.html .
           # Fix references in dist/swagger-initializer and index.html
@@ -68,8 +60,6 @@ jobs:
           sed -i "s|href=\"./|href=\"dist/|g" index.html
           sed -i "s|src=\"./|src=\"dist/|g" index.html
           sed -i "s|href=\"index|href=\"dist/index|g" index.html
-          # Update current release
-          echo ${{ steps.swagger-ui.outputs.release_tag }} > swagger-ui.version
 
       - name: Upload Artifact
         uses: actions/upload-pages-artifact@v1
