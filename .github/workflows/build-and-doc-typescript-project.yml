@@ -1,0 +1,43 @@
+name: Build and Document Application
+
+on:
+  workflow_call:
+    secrets:
+      token:
+        description: 'The GitHub/npm token'
+        required: true
+
+jobs:
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    env:
+      working-directory: ./
+    defaults:
+      run:
+        working-directory: ${{env.working-directory}}
+    steps:
+      - name: Setup
+        uses: OpenPhone/gha/.github/actions/setup@v5
+        with:
+          token: ${{ secrets.token }}
+          working-directory: ${{env.working-directory}}
+
+      - name: Typecheck
+        run: npm run typecheck
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Build
+        run: npm run build
+
+      - name: Generate Docs
+        run: npm run doc
+
+      - name: Archive docs
+        uses: actions/upload-artifact@v3
+        with:
+          name: Docs
+          path: |
+            docs
